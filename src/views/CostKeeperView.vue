@@ -1,11 +1,12 @@
 <template>
   <div class="cost">
     <h1>Cost Keeper</h1>
-    <display-data :items="paymentsList"/>
+    <display-data :items="currentElements"/>
+    <MyPagination :cur="cur" :length="getPaymentsList.length" :n="n" @changePage="changePage"/>
     <my-button :handler="toggleShowForm">
       Add New Cost +
     </my-button>
-    <add-data-form @addData='addPaymentData' v-show="isFormShown"/>
+    <add-data-form v-show="isFormShown"/>
   </div>
 </template>
 
@@ -15,52 +16,46 @@
   import DisplayData from "@/components/DisplayData";
   import AddDataForm from "@/components/AddDataForm";
   import myButton from "@/components/MyButton";
+  import MyPagination from "@/components/MyPagination.vue";
+
+  import { mapActions, mapGetters } from "vuex";
 
   export default {
     name: "CostKeeperView",
     components: {
       DisplayData,
       AddDataForm,
-      myButton
+      myButton,
+      MyPagination
     },
     data() {
       return {
-        paymentsList: [],
+        cur: 1,
+        n: 10,
         isFormShown: false,
       };
     },
     methods: {
-      addPaymentData(data) {
-        this.paymentsList.push(data);
-      },
-      fetchData() {
-        return [
-          {
-            date: "28.03.2020",
-            category: "Food",
-            value: 169,
-          },
-          {
-            date: "24.03.2020",
-            category: "Transport",
-            value: 360,
-          },
-          {
-            date: "24.03.2020",
-            category: "Food",
-            value: 532,
-          },
-        ];
-      },
-
+      ...mapActions('payments', [
+        'fetchData',
+      ]),
       toggleShowForm() {
         this.isFormShown = !this.isFormShown;
+      },
+      changePage(p){
+        this.cur = p
       }
     },
 
+    computed: {
+      ...mapGetters('payments', ['getFullPaymentValue', 'getPaymentsList']),
+      currentElements(){
+        return this.getPaymentsList.slice(this.n * (this.cur - 1), this.n * (this.cur -1) + this.n)
+      }
+    },
 
     created() {
-      this.paymentsList = this.fetchData()
+      this.fetchData();
     },
 
   }
