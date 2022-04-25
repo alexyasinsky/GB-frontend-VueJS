@@ -44,16 +44,16 @@ export default {
     },
   },
   methods: {
-    ...mapMutations('payments', ['addDataToPaymentsList']),
     ...mapMutations('category', ['addCategory']),
     ...mapActions('category', ['fetchCategoryList']),
+    ...mapActions('payments', ['addItemToPaymentsStore']),
     onClickSave(){
-      const data = {
+      const item = {
         date: this.date || this.getCurrentDate,
         category: this.category,
         value: this.value
       }
-      this.addDataToPaymentsList(data);
+      this.addItemToPaymentsStore(item);
     },
     onClickAddCategory() {
       if (!this.categoryList.find(category => category === this.newCategory)) {

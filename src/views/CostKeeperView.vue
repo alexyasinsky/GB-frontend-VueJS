@@ -1,8 +1,8 @@
 <template>
   <div class="cost">
     <h1>Cost Keeper</h1>
-    <display-data :items="currentElements"/>
-    <MyPagination :cur="cur" :length="getPaymentsList.length" :n="n" @changePage="changePage"/>
+    <display-data :items="getPaymentsCurrentPage"/>
+    <MyPagination :cur="cur" :count="getPaymentsPagesCount" @changePage="changePage"/>
     <my-button :handler="toggleShowForm">
       Add New Cost +
     </my-button>
@@ -31,32 +31,42 @@
     data() {
       return {
         cur: 1,
-        n: 10,
         isFormShown: false,
       };
     },
     methods: {
       ...mapActions('payments', [
-        'fetchData',
+        'fetchPaymentsData',
+        'fetchPaymentsPagesCount',
+        'receivePaymentsCurrentPageItems'
       ]),
       toggleShowForm() {
         this.isFormShown = !this.isFormShown;
       },
-      changePage(p){
-        this.cur = p
+      async changePage(p){
+        this.cur = p;
+        await this.fetchPaymentsData(p);
+        // await this.receivePaymentsCurrentPageItems(p);
       }
     },
 
     computed: {
-      ...mapGetters('payments', ['getFullPaymentValue', 'getPaymentsList']),
+      ...mapGetters('payments', [
+        'getPaymentsStore',
+        'getPaymentsPagesCount',
+        'getPaymentsCurrentPage'
+      ]),
       currentElements(){
-        return this.getPaymentsList.slice(this.n * (this.cur - 1), this.n * (this.cur -1) + this.n)
+        return this.getStore;
       }
     },
 
-    created() {
-      this.fetchData();
+    async created() {
+      await this.fetchPaymentsData(this.cur);
+      // await this.fetchPaymentsPagesCount();
+      // await this.receivePaymentsCurrentPageItems(this.cur);
     },
+
 
   }
 

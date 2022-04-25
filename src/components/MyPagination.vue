@@ -1,7 +1,7 @@
 <template>
   <div :class="[$style.wrp]">
     <div @click="onClick(cur - 1)">	&#60;</div>
-    <div v-for="i in amount"
+    <div v-for="i in count"
     :key="i"
     :class="{[$style.active]: cur === i}"
     @click="onClick(i)"
@@ -14,18 +14,13 @@
 export default {
   name: "MyPagination",
   props: {
-    length: Number,
-    n: Number,
+    count: Number,
     cur: Number,
   },
-  computed: {
-    amount() {
-      return Math.ceil(this.length / this.n)
-    }
-  },
+
   methods: {
     onClick(p) {
-      if(p<1 || p> this.amount) {
+      if(p<1 || p> this.count) {
         return
       }
       this.$emit('changePage', p)
