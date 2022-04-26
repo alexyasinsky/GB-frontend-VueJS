@@ -34,7 +34,7 @@ export default {
     getPaymentsPagesCount: state => {
       return state.paymentsPagesCount;
     },
-    getPaymentsCurrentPage: state => {
+    getPaymentsCurrentPageItems: state => {
       return state.paymentsCurrentPage;
     }
   },

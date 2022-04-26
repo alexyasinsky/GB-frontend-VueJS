@@ -1,13 +1,13 @@
 <template>
   <div :class="[$style.wrp]">
-    <div @click="onClick(cur - 1)">	&#60;</div>
+    <div @click="onClick(current - 1)">	&#60;</div>
     <div v-for="i in count"
     :key="i"
-    :class="{[$style.active]: cur === i}"
+    :class="{[$style.active]: current === i}"
     @click="onClick(i)"
     >{{ i }}
     </div>
-    <div @click="onClick(cur + 1)">	&#62;</div>
+    <div @click="onClick(current + 1)">	&#62;</div>
   </div>
 </template>
 <script>
@@ -15,15 +15,15 @@ export default {
   name: "MyPagination",
   props: {
     count: Number,
-    cur: Number,
+    current: Number,
   },
 
   methods: {
-    onClick(p) {
-      if(p<1 || p> this.count) {
+    onClick(page) {
+      if(page < 1 || page > this.count) {
         return
       }
-      this.$emit('changePage', p)
+      this.$emit('changePage', page)
     }
   },
 }
