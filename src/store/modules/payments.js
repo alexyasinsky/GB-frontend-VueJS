@@ -70,7 +70,6 @@ export default {
         },100)
       }).then(res=> {
         commit('setPaymentsStoreDataChunk', res);
-        dispatch('fetchPaymentsPagesCount');
         dispatch('receivePaymentsCurrentPageItems', pageNumber);
       })
     },

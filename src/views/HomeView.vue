@@ -37,6 +37,7 @@
     methods: {
       ...mapActions('payments', [
         'fetchPaymentsData',
+        'fetchPaymentsPagesCount'
       ]),
       toggleShowForm() {
         this.isFormShown = !this.isFormShown;
@@ -57,14 +58,22 @@
     },
 
     async created() {
-      await this.fetchPaymentsData(this.currentPage);
+      await this.fetchPaymentsPagesCount();
+      let page = +this.$route.params.page;
+      if(isNaN(page) || page > this.getPaymentsPagesCount) {
+        await this.$router.push('/home/1');
+      }
+      this.currentPage = page;
+      await this.fetchPaymentsData(page);
     },
 
-    beforeRouteUpdate(to, before, next) {
+    async beforeRouteUpdate(to, before, next) {
       let page = +to.params.page;
-      if(isNaN(page) || page > this.getPaymentsPagesCount) page = 1;
+      if(isNaN(page) || page > this.getPaymentsPagesCount) {
+        next('/home/1');
+      }
       this.currentPage = page;
-      this.fetchPaymentsData(page);
+      await this.fetchPaymentsData(page);
       next();
     }
 
