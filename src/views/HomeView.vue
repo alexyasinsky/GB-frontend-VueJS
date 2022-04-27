@@ -42,8 +42,10 @@
         this.isFormShown = !this.isFormShown;
       },
       changePage(page){
-        this.currentPage = page;
-        this.fetchPaymentsData(page);
+        if(page !== this.currentPage) {
+          this.$router.push(`/home/${page}`);
+        }
+
       }
     },
 
@@ -54,28 +56,23 @@
       ])
     },
 
-    watch: {
-      // eslint-disable-next-line
-      currentPage: function(newPage, oldPage) {
-        this.$router.push(`/${newPage}`);
-      }
-    },
     async created() {
       await this.fetchPaymentsData(this.currentPage);
     },
 
-    mounted() {
-      // if(!this.$route.params?.page) this.$router.push('/1');
-      // if(isNaN(this.$route.params.page)) {
-      //   this.$router.push('/notfound');
-      //   return;
-      // }
-      // this.fetchPaymentsData(this.$route.params.page);
-      // this.currentPage = Number(this.$route.params.page);
-    },
-
-    
-
+    beforeRouteUpdate(to, before, next) {
+      let page = +to.params.page;
+      if (!page) page = 1;
+      console.log(page);
+      if (isNaN(page) || page > this.getPaymentsPagesCount) {
+        this.$router.push('/notfound');
+      } else {
+        console.log(this.getPaymentsPagesCount);
+        this.currentPage = page;
+        this.fetchPaymentsData(page);
+        next();
+      }
+    }
 
   }
 
