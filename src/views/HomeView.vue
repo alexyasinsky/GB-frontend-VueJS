@@ -1,18 +1,82 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="cost">
+    <h1>Cost Keeper</h1>
+    <display-data :items="getPaymentsCurrentPageItems"/>
+    <MyPagination :current="currentPage" :count="getPaymentsPagesCount" @changePage="changePage"/>
+    <my-button :handler="toggleShowForm">
+      Add New Cost +
+    </my-button>
+    <add-data-form v-show="isFormShown"/>
   </div>
 </template>
 
-<script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
 
-export default {
-  name: 'HomeView',
-  components: {
-    HelloWorld
+<script>
+
+  import DisplayData from "@/components/DisplayData";
+  import AddDataForm from "@/components/AddDataForm";
+  import myButton from "@/components/MyButton";
+  import MyPagination from "@/components/MyPagination.vue";
+
+  import { mapActions, mapGetters } from "vuex";
+
+  export default {
+    name: "HomeView",
+    components: {
+      DisplayData,
+      AddDataForm,
+      myButton,
+      MyPagination
+    },
+    data() {
+      return {
+        currentPage: 1,
+        isFormShown: false,
+      };
+    },
+    methods: {
+      ...mapActions('payments', [
+        'fetchPaymentsData',
+      ]),
+      toggleShowForm() {
+        this.isFormShown = !this.isFormShown;
+      },
+      changePage(page){
+        this.currentPage = page;
+        this.fetchPaymentsData(page);
+      }
+    },
+
+    computed: {
+      ...mapGetters('payments', [
+        'getPaymentsPagesCount',
+        'getPaymentsCurrentPageItems'
+      ])
+    },
+
+    watch: {
+      // eslint-disable-next-line
+      currentPage: function(newPage, oldPage) {
+        this.$router.push(`/${newPage}`);
+      }
+    },
+    async created() {
+      await this.fetchPaymentsData(this.currentPage);
+    },
+
+    mounted() {
+      // if(!this.$route.params?.page) this.$router.push('/1');
+      // if(isNaN(this.$route.params.page)) {
+      //   this.$router.push('/notfound');
+      //   return;
+      // }
+      // this.fetchPaymentsData(this.$route.params.page);
+      // this.currentPage = Number(this.$route.params.page);
+    },
+
+    
+
+
   }
-}
+
 </script>

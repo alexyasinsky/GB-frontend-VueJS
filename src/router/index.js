@@ -1,31 +1,43 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import HomeView from '../views/HomeView.vue';
+import NotFoundView from '../views/NotFoundView.vue';
 
 Vue.use(VueRouter)
 
 const routes = [
+
+  {
+    path: '/about',
+    name: 'about',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+  },
+  {
+    path: '/notfound',
+    name: 'notfound',
+    component: NotFoundView
+  },
   {
     path: '/',
     name: 'home',
-    component: HomeView
+    component: HomeView,
+    children: [
+      {
+        path: "/:page",
+        component: HomeView,
+      }
+    ],
+    beforeEnter: (to, from, next) => {
+      console.log(to, from, next);
+      next();
+    }
   },
   {
-    path: '/calculator',
-    name: 'calculator',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/CalculatorView.vue')
-  },
-
-  {
-    path: '/cost',
-    name: 'cost',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/CostKeeperView.vue')
+    path: '*',
+    redirect: {path: '/notfound'}
   }
 ]
 
