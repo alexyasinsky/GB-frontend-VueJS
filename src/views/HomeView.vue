@@ -42,8 +42,10 @@
         this.isFormShown = !this.isFormShown;
       },
       changePage(page){
-        this.currentPage = page;
-        this.fetchPaymentsData(page);
+        if(page !== this.currentPage) {
+          this.$router.push(`/${page}`);
+        }
+
       }
     },
 
@@ -56,9 +58,9 @@
 
     watch: {
       // eslint-disable-next-line
-      currentPage: function(newPage, oldPage) {
-        this.$router.push(`/${newPage}`);
-      }
+      // currentPage: function(newPage, oldPage) {
+      //   this.$router.push(`/${newPage}`);
+      // }
     },
     async created() {
       await this.fetchPaymentsData(this.currentPage);
@@ -73,6 +75,14 @@
       // this.fetchPaymentsData(this.$route.params.page);
       // this.currentPage = Number(this.$route.params.page);
     },
+
+    beforeRouteUpdate(to, before, next) {
+      console.log(to);
+      const page = +to.params.page;
+      this.currentPage = page;
+      this.fetchPaymentsData(page);
+      next();
+    }
 
     
 

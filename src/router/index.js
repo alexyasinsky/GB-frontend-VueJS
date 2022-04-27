@@ -30,10 +30,6 @@ const routes = [
         component: HomeView,
       }
     ],
-    beforeEnter: (to, from, next) => {
-      console.log(to, from, next);
-      next();
-    }
   },
   {
     path: '*',
