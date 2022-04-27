@@ -6,26 +6,30 @@ import NotFoundView from '../views/NotFoundView.vue';
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: '/home',
-    name: 'home',
-    component: HomeView,
-    children: [
-      {
-        path: ":page",
-        component: HomeView,
-      }
-    ]
-  },
+
   {
     path: '/about',
     name: 'about',
-    component: () => import('../views/AboutView.vue')
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
   },
   {
     path: '/notfound',
     name: 'notfound',
     component: NotFoundView
+  },
+  {
+    path: '/',
+    name: 'home',
+    component: HomeView,
+    children: [
+      {
+        path: "/:page",
+        component: HomeView,
+      }
+    ],
   },
   {
     path: '*',
@@ -36,8 +40,7 @@ const routes = [
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes,
+  routes
 })
-
 
 export default router
