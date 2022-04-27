@@ -43,7 +43,7 @@
       },
       changePage(page){
         if(page !== this.currentPage) {
-          this.$router.push(`/${page}`);
+          this.$router.push(`/home/${page}`);
         }
 
       }
@@ -56,36 +56,17 @@
       ])
     },
 
-    watch: {
-      // eslint-disable-next-line
-      // currentPage: function(newPage, oldPage) {
-      //   this.$router.push(`/${newPage}`);
-      // }
-    },
     async created() {
       await this.fetchPaymentsData(this.currentPage);
     },
 
-    mounted() {
-      // if(!this.$route.params?.page) this.$router.push('/1');
-      // if(isNaN(this.$route.params.page)) {
-      //   this.$router.push('/notfound');
-      //   return;
-      // }
-      // this.fetchPaymentsData(this.$route.params.page);
-      // this.currentPage = Number(this.$route.params.page);
-    },
-
     beforeRouteUpdate(to, before, next) {
-      console.log(to);
-      const page = +to.params.page;
+      let page = +to.params.page;
+      if(isNaN(page) || page > this.getPaymentsPagesCount) page = 1;
       this.currentPage = page;
       this.fetchPaymentsData(page);
       next();
     }
-
-    
-
 
   }
 
