@@ -6,7 +6,6 @@ import NotFoundView from '../views/NotFoundView.vue';
 Vue.use(VueRouter)
 
 const routes = [
-
   {
     path: '/home',
     name: 'home',
@@ -18,7 +17,6 @@ const routes = [
       },
     ],
   },
-
   {
     path: '/about',
     name: 'about',
@@ -29,7 +27,10 @@ const routes = [
     name: 'notfound',
     component: NotFoundView
   },
-
+  {
+    path: '/',
+    redirect: {path: '/home/1'}
+  },
   {
     path: '*',
     redirect: {path: '/notfound'}

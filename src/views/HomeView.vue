@@ -2,11 +2,11 @@
   <div class="cost">
     <h1>Cost Keeper</h1>
     <display-data :items="getPaymentsCurrentPageItems"/>
-    <MyPagination :current="currentPage" :count="getPaymentsPagesCount" @changePage="changePage"/>
+    <MyPagination :current="currentPage" :count="getPaymentsLastPage" @changePage="changePage"/>
     <my-button :handler="toggleShowForm">
       Add New Cost +
     </my-button>
-    <add-data-form v-show="isFormShown"/>
+    <add-data-form v-show="isFormShown" :current="currentPage"/>
   </div>
 </template>
 
@@ -35,48 +35,50 @@
       };
     },
     methods: {
+
       ...mapActions('payments', [
-        'fetchPaymentsData',
-        'fetchPaymentsPagesCount'
+        'fetchPaymentsDataFromDB',
+        'fetchPaymentsLastPage'
       ]),
+
       toggleShowForm() {
         this.isFormShown = !this.isFormShown;
       },
+
       changePage(page){
         if(page !== this.currentPage) {
           this.$router.push(`/home/${page}`);
         }
-
-      }
+      },
     },
 
     computed: {
       ...mapGetters('payments', [
-        'getPaymentsPagesCount',
+        'getPaymentsLastPage',
         'getPaymentsCurrentPageItems'
       ])
     },
 
     async created() {
-      await this.fetchPaymentsPagesCount();
+      await this.fetchPaymentsLastPage();
       let page = +this.$route.params.page;
-      if(isNaN(page) || page > this.getPaymentsPagesCount) {
-        await this.$router.push('/home/1');
+      if(isNaN(page) || page > this.getPaymentsLastPage) {
+        return this.$router.push('/home/1');
       }
       this.currentPage = page;
-      await this.fetchPaymentsData(page);
+      return this.fetchPaymentsDataFromDB(page);
     },
 
     async beforeRouteUpdate(to, before, next) {
       let page = +to.params.page;
-      if(isNaN(page) || page > this.getPaymentsPagesCount) {
-        next('/home/1');
+      if(isNaN(page) || page > this.getPaymentsLastPage) {
+        return next('/home/1');
+      } else {
+        this.currentPage = page;
+        await this.fetchPaymentsDataFromDB(page);
+        return next();
       }
-      this.currentPage = page;
-      await this.fetchPaymentsData(page);
-      next();
     }
-
   }
 
 </script>

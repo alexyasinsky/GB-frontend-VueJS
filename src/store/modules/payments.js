@@ -21,18 +21,15 @@ export default {
   namespaced: true,
 
   state: {
-    paymentsStore: {},
-    paymentsPagesCount: 1,
+    paymentsData: {},
+    PaymentsLastPage: 1,
     paymentsCurrentPage: [],
   },
 
   getters: {
-    getPaymentsStore: state => state.store,
-    // getFullValue: state => {
-    //   return state.paymentList.reduce((res, cur) => res + cur.value, 0)
-    // },
-    getPaymentsPagesCount: state => {
-      return state.paymentsPagesCount;
+    getPaymentsData: state => state.store,
+    getPaymentsLastPage: state => {
+      return state.PaymentsLastPage;
     },
     getPaymentsCurrentPageItems: state => {
       return state.paymentsCurrentPage;
@@ -40,66 +37,66 @@ export default {
   },
 
   mutations: {
-    setPaymentsStoreDataChunk(state, payload) {
-      state.paymentsStore = Object.assign(state.paymentsStore, payload);
+    setPaymentsDataChunk(state, payload) {
+      state.paymentsData = Object.assign(state.paymentsData, payload);
     },
-    // addItemToPaymentsStore(state, payload) {
-    //   state.paymentsStore.push(payload)
-    // },
-    setPaymentsPagesCount(state, payload) {
-      state.paymentsPagesCount = payload;
+    setPaymentsLastPage(state, payload) {
+      state.PaymentsLastPage = payload;
     },
     setPaymentsCurrentPage(state, payload) {
       state.paymentsCurrentPage = [];
-      state.paymentsCurrentPage = [...payload];
+      const page = 'page' + payload;
+      const list = [...state.paymentsData[page]];
+      state.paymentsCurrentPage = [...list];
     }
   },
 
   actions: {
 
-    fetchPaymentsData({commit, state, dispatch}, pageNumber= 1) {
+    fetchPaymentsDataFromDB({commit, state}, pageNumber= 1) {
       return new Promise((resolve)=>{
         setTimeout(()=>{
           const page = 'page' + pageNumber;
           // eslint-disable-next-line no-prototype-builtins
-          if (!state.paymentsStore.hasOwnProperty(page)) {
+          if (!state.paymentsData.hasOwnProperty(page)) {
             resolve({[page]: db[page]});
           } else {
             resolve({});
           }
         },100)
       }).then(res=> {
-        commit('setPaymentsStoreDataChunk', res);
-        dispatch('receivePaymentsCurrentPageItems', pageNumber);
+        commit('setPaymentsDataChunk', res);
+        commit('setPaymentsCurrentPage', pageNumber);
       })
     },
 
-    fetchPaymentsPagesCount({commit}) {
+    fetchPaymentsLastPage({commit}) {
       return new Promise((resolve) => {
         resolve(Object.keys(db).length);
       }).then(res => {
-        commit('setPaymentsPagesCount', res);
+        commit('setPaymentsLastPage', res);
       });
     },
 
-    receivePaymentsCurrentPageItems({commit, state}, pageNumber = 1) {
-      const page = 'page' + pageNumber;
-      const list = [...state.paymentsStore[page]];
-      commit("setPaymentsCurrentPage", list);
+
+    addPaymentToDB({state, dispatch}, item) {
+      return new Promise((resolve) => {
+        let lastPageIndex = state.PaymentsLastPage;
+        const page = 'page' + lastPageIndex;
+        if (db[page].length === 3) {
+          lastPageIndex += 1;
+          const nextPage = 'page' + lastPageIndex;
+          Object.assign(db, {[nextPage]: [item]});
+          resolve('new page');
+        } else {
+          db[page].push(item);
+          resolve('current page');
+        }
+      }).then(() => {
+        dispatch('fetchPaymentsLastPage');
+      });
     },
 
-    addItemToPaymentsStore({state, dispatch}, item) {
-      let lastPageIndex = state.paymentsPagesCount;
-      const page = 'page' + lastPageIndex;
-      if (db[page].length === 3) {
-        lastPageIndex += 1;
-        const nextPage = 'page' + lastPageIndex;
-        Object.assign(db, {[nextPage]: [item]});
-      } else {
-        db[page].push(item);
-      }
-      dispatch('fetchPaymentsData', lastPageIndex);
-    }
   },
 
 
