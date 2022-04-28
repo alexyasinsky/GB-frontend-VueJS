@@ -6,7 +6,7 @@
     <my-button :handler="toggleShowForm">
       Add New Cost +
     </my-button>
-    <add-data-form v-show="isFormShown"/>
+    <add-data-form v-show="isFormShown" :current="currentPage"/>
   </div>
 </template>
 
@@ -68,13 +68,14 @@
     },
 
     async beforeRouteUpdate(to, before, next) {
+      console.log('homeview');
       let page = +to.params.page;
       if(isNaN(page) || page > this.getPaymentsPagesCount) {
-        next('/home/1');
+        return next('/home/1');
       }
       this.currentPage = page;
       await this.fetchPaymentsData(page);
-      next();
+      return next();
     }
 
   }

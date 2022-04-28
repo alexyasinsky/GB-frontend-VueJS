@@ -32,8 +32,12 @@ export default {
       isNewCategoryFormShown: false
     }
   },
+  props: {
+    current: Number
+  },
   computed: {
-    ...mapGetters('category', ['getCategoryList']),    
+    ...mapGetters('category', ['getCategoryList']),
+    ...mapGetters('payments', ['getPaymentsPagesCount']),
     getCurrentDate(){
       const today = new Date();
       let formatter = new Intl.DateTimeFormat("ru");
@@ -46,14 +50,26 @@ export default {
   methods: {
     ...mapMutations('category', ['addCategory']),
     ...mapActions('category', ['fetchCategoryList']),
-    ...mapActions('payments', ['addItemToPaymentsStore']),
-    onClickSave(){
+    ...mapActions('payments', ['addItemToPaymentsStore', 'fetchPaymentsData']),
+    onClickSave (){
       const item = {
         date: this.date || this.getCurrentDate,
         category: this.category,
         value: this.value
       }
-      this.addItemToPaymentsStore(item);
+      return new Promise((res) => {
+        this.addItemToPaymentsStore(item);
+        res();
+      }).then(()=> {
+        if (this.getPaymentsPagesCount !== this.current) {
+          this.$router.push(`/home/${this.getPaymentsPagesCount}`);
+        } else {
+          this.fetchPaymentsData(this.getPaymentsPagesCount);
+        }
+      })
+
+
+
     },
     onClickAddCategory() {
       if (!this.categoryList.find(category => category === this.newCategory)) {

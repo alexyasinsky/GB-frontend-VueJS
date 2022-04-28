@@ -98,7 +98,7 @@ export default {
       } else {
         db[page].push(item);
       }
-      dispatch('fetchPaymentsData', lastPageIndex);
+      dispatch('fetchPaymentsPagesCount');
     }
   },
 

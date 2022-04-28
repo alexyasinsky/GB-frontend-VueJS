@@ -29,7 +29,10 @@ const routes = [
     name: 'notfound',
     component: NotFoundView
   },
-
+  {
+    path: '/',
+    redirect: {path: '/home'}
+  },
   {
     path: '*',
     redirect: {path: '/notfound'}
