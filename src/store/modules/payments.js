@@ -83,6 +83,7 @@ export default {
       return new Promise((resolve) => {
         let lastPageIndex = state.PaymentsLastPage;
         const page = 'page' + lastPageIndex;
+        item.id = Math.floor(Math.random()* Math.floor(Math.random() * Date.now()));
         if (db[page].length === 3) {
           lastPageIndex += 1;
           const nextPage = 'page' + lastPageIndex;

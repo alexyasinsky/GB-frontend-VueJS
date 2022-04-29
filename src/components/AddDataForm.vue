@@ -13,9 +13,7 @@
        <form v-show="isNewCategoryFormShown">
          <input v-model="newCategory"  placeholder="category"/>
          <my-button :handler="onClickAddCategory">Добавить</my-button>
-       </form>
-           <hr>
-        
+       </form>      
   </div>
 </template>
 
@@ -46,7 +44,6 @@
     computed: {
 
       ...mapGetters('category', ['getCategoryList']),
-      ...mapGetters('payments', ['getPaymentsLastPage']),
 
       getCurrentDate(){
         const today = new Date();
@@ -62,10 +59,9 @@
 
       ...mapMutations('category', ['addCategory']),
       ...mapActions('category', ['fetchCategoryList']),
-      ...mapActions('payments', ['addPaymentToDB', 'fetchPaymentsDataFromDB']),
 
       async onClickSave (){
-        await this.$router.push(`/home/add/payment/${this.category}/?value=${this.value}&date=${this.date||this.getCurrentDate}`);
+        await this.$router.push(`/home/add/payment/${this.category}/?value=${this.value}&date=${this.date||this.getCurrentDate}`).catch(() => {});
       },
 
 
