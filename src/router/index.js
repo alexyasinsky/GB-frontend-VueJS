@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue';
 import NotFoundView from '../views/NotFoundView.vue';
+import addDataForm from "../components/AddDataForm.vue";
 
 Vue.use(VueRouter)
 
@@ -12,8 +13,11 @@ const routes = [
     component: HomeView,
     children: [
       {
+        path: "add/payment/:category",
+        component: addDataForm
+      },
+      {
         path: ":page",
-        component: HomeView,
       },
     ],
   },
@@ -42,5 +46,10 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+
+// router.beforeEach((to, form, next) => {
+//   console.log(to);
+//   next();
+// })
 
 export default router

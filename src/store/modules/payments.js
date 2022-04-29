@@ -63,7 +63,7 @@ export default {
           } else {
             resolve({});
           }
-        },100)
+        },0)
       }).then(res=> {
         commit('setPaymentsDataChunk', res);
         commit('setPaymentsCurrentPage', pageNumber);

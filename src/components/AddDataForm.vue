@@ -1,6 +1,6 @@
 <template>
   <div>
-    <form>
+    <form action='/home/add'>
         <input v-model="date"  placeholder="date"/>
         <select v-model="category" v-if="categoryList">
           <option disabled value="">category</option>
@@ -14,6 +14,8 @@
          <input v-model="newCategory"  placeholder="category"/>
          <my-button :handler="onClickAddCategory">Добавить</my-button>
        </form>
+           <hr>
+        
   </div>
 </template>
 
@@ -34,7 +36,8 @@
         category: "",
         value: "",
         newCategory: "",
-        isNewCategoryFormShown: false
+        isNewCategoryFormShown: false,
+        
       }
     },
     props: {
@@ -61,28 +64,10 @@
       ...mapActions('category', ['fetchCategoryList']),
       ...mapActions('payments', ['addPaymentToDB', 'fetchPaymentsDataFromDB']),
 
-      onClickSave (){
-        return new Promise((res) => {
-          const item = {
-            date: this.date || this.getCurrentDate,
-            category: this.category,
-            value: this.value
-          }
-          this.addPaymentToDB(item);
-          res();
-        }).then(()=> {
-          this.checkNecessityOfChangingPage();
-        })
+      async onClickSave (){
+        await this.$router.push(`/home/add/payment/${this.category}/?value=${this.value}&date=${this.date||this.getCurrentDate}`);
       },
 
-      checkNecessityOfChangingPage() {
-        const paymentsLastPage = this.getPaymentsLastPage;
-        if (paymentsLastPage !== this.current) {
-          this.$router.push(`/home/${paymentsLastPage}`);
-        } else {
-          this.fetchPaymentsDataFromDB(paymentsLastPage);
-        }
-      },
 
       onClickAddCategory() {
         if (!this.categoryList.find(category => category === this.newCategory)) {
@@ -95,12 +80,16 @@
 
       showCategoryAddForm() {
         this.isNewCategoryFormShown = !this.isNewCategoryFormShown
-      }
+      },
+
+
     },
 
       async created() {
         await this.fetchCategoryList();
       },
+
+
 
 
   }
