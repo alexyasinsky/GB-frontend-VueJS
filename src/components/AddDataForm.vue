@@ -35,11 +35,7 @@
         value: "",
         newCategory: "",
         isNewCategoryFormShown: false,
-        
       }
-    },
-    props: {
-      current: Number
     },
     computed: {
 

@@ -1,5 +1,6 @@
 <template>
   <div class="cost">
+    <button @click="openAuthModalForm">Authorization  (Modal)</button>
     <h1>Cost Keeper</h1>
     <display-data :items="getPaymentsCurrentPageItems" />
     <MyPagination
@@ -7,7 +8,7 @@
       :count="getPaymentsLastPage"
       @changePage="changePage"
     />
-    <my-button :handler="toggleShowForm"> Add New Cost + </my-button>
+    <button @click="openAddPaymentModalForm">Add New Cost + (Modal)</button>
     <hr />
     <my-button :handler="addCustomPayment" :payload="customPayments[0]"
       >Food 500</my-button
@@ -18,25 +19,19 @@
     <my-button :handler="addCustomPayment" :payload="customPayments[2]"
       >Entertainment 2000</my-button
     >
-    <add-data-form v-show="isFormShown" :current="currentPage" />
   </div>
 </template>
 
 <script>
 import DisplayData from '@/components/DisplayData';
-import AddDataForm from '@/components/AddDataForm';
-import myButton from '@/components/MyButton';
 import MyPagination from '@/components/MyPagination.vue';
-
 import { mapActions, mapGetters } from 'vuex';
-import MyButton from '@/components/MyButton.vue';
+import MyButton from "@/components/MyButton";
 
 export default {
   name: 'HomeView',
   components: {
     DisplayData,
-    AddDataForm,
-    myButton,
     MyPagination,
     MyButton,
   },
@@ -67,10 +62,6 @@ export default {
       'addPaymentToDB',
     ]),
 
-    toggleShowForm() {
-      this.isFormShown = !this.isFormShown;
-    },
-
     changePage(page) {
       if (page !== this.currentPage) {
         this.$router.push(`/home/${page}`);
@@ -95,7 +86,7 @@ export default {
       if (paymentsLastPage !== this.currentPage) {
         return next(`/home/${paymentsLastPage}`);
       } else {
-        this.fetchPaymentsDataFromDB(paymentsLastPage);
+        await this.fetchPaymentsDataFromDB(paymentsLastPage);
       }
     },
 
@@ -119,6 +110,14 @@ export default {
       this.currentPage = page;
       return this.fetchPaymentsDataFromDB(page);
     },
+
+    openAddPaymentModalForm(){
+      this.$modal.show('addDataForm', {title: "Add New Payment", component: 'AddDataForm'})
+    },
+
+    openAuthModalForm(){
+      this.$modal.show('AuthForm', {title: "Authorization", component: 'AuthForm'})
+    }
   },
 
   computed: {
@@ -135,7 +134,7 @@ export default {
   },
 
   async created() {
-    this.checkExistingOfPaymentPage();
+    await this.checkExistingOfPaymentPage();
   },
 
   async beforeRouteUpdate(to, before, next) {
