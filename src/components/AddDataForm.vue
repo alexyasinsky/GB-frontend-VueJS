@@ -1,6 +1,6 @@
 <template>
   <div>
-    <form action='/home/add'>
+    <form>
         <input v-model="date"  placeholder="date"/>
         <select v-model="category" v-if="categoryList">
           <option disabled value="">category</option>
@@ -61,7 +61,7 @@
       ...mapActions('category', ['fetchCategoryList']),
 
       async onClickSave (){
-        await this.$router.push(`/home/add/payment/${this.category}/?value=${this.value}&date=${this.date||this.getCurrentDate}`).catch(() => {});
+        await this.$router.push(`/home/add/payment/${this.category || "empty"}/?value=${this.value || null}&date=${this.date||this.getCurrentDate}`).catch(() => {});
       },
 
 

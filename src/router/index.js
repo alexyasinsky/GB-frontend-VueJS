@@ -2,7 +2,6 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue';
 import NotFoundView from '../views/NotFoundView.vue';
-import addDataForm from "../components/AddDataForm.vue";
 
 Vue.use(VueRouter)
 
@@ -14,7 +13,6 @@ const routes = [
     children: [
       {
         path: "add/payment/:category",
-        component: addDataForm
       },
       {
         path: ":page",

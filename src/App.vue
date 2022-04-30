@@ -3,7 +3,6 @@
     <nav>
       <router-link to="/home">Home</router-link> |
       <router-link to="/about">About</router-link> |
-      <router-link to="/home/212">Home 212</router-link> |
       <router-link to="/notfound">Not Found</router-link>
       
     </nav>
