@@ -1,6 +1,6 @@
 <template>
     <div class="menu">
-      <my-button :handler="editPayment">Редактировать</my-button>
+      <my-button :handler="editPayment">Редактировать</my-button><br>
       <my-button :handler="deletePayment">Удалить</my-button>
     </div>
 </template>

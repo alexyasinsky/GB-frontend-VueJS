@@ -1,12 +1,13 @@
 <template>
-  <div class="wrapper">
-    <div class="header">{{ settings.title }}</div>
-    <div class="content">
-      <component :is="settings.component" />
-    </div>
-    <div class="footer">
-      <button @click="onCloseClick">Close</button>
-    </div>
+  <div>
+    <component :is="settings.positionComp" :position="settings.position">
+      <div class="content">
+        <component :is="settings.component" />
+      </div>
+      <div class="footer">
+      </div>
+    </component>
+    <div class="close" @click="onCloseClick"></div>
   </div>
 </template>
 
@@ -17,6 +18,8 @@ export default {
     settings: Object
   },
   components: {
+    CenterWrapper: () => import('./CenterWrapper'),
+    RelativeWrapper: () => import('./RelativeWrapper'),
     AddDataForm: ()=>import('./AddDataForm.vue'),
     AuthForm: ()=>import('./AuthForm.vue'),
     ContextMenu: () => import('./ContextMenu'),
@@ -30,11 +33,12 @@ export default {
 </script>
 
 <style lang="scss" scoped >
-  .wrapper {
-    padding: 20px;
+  .close {
     position: absolute;
-    top: 30%;
-    left: 35%;
-    background: #efefef;
+    z-index: 1;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
   }
 </style>

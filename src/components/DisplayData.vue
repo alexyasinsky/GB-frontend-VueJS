@@ -2,9 +2,7 @@
   <div>
     <div v-for="(item, index) in items" :key="index" class="payment__item">
       {{ item }}
-      <div class="button-wrapper">
-        <button @click="openContextMenu">...</button>
-      </div>
+    <button @click="openContextMenu">...</button>
   </div>
 </div>
 </template>
@@ -21,8 +19,8 @@
   },
 
     methods: {
-      openContextMenu() {
-        this.$modal.show('ContextMenu', {title: "Context Menu", component: 'ContextMenu'})
+      openContextMenu(event) {
+        this.$modal.show('ContextMenu', {component: 'ContextMenu', positionComp: 'RelativeWrapper', position: {x: event.clientX, y: event.clientY}})
       }
     }
 
@@ -35,7 +33,4 @@
     display: flex;
   }
 
-  .button-wrapper {
-
-  }
 </style>

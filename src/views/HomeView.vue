@@ -112,11 +112,11 @@ export default {
     },
 
     openAddPaymentForm(){
-      this.$modal.show('addDataForm', {title: "Add New Payment", component: 'AddDataForm'})
+      this.$modal.show('addDataForm', {component: 'AddDataForm', positionComp: 'CenterWrapper'})
     },
 
     openAuthForm(){
-      this.$modal.show('AuthForm', {title: "Authorization", component: 'AuthForm'})
+      this.$modal.show('AuthForm', {component: 'AuthForm', positionComp: 'CenterWrapper'})
     }
   },
 

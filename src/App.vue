@@ -37,7 +37,7 @@ export default {
     this.$modal.EventBus.$off('show', this.onShow)
     this.$modal.EventBus.$off('hide', this.onHide)
   },
-  components: { ModalWindow:()=>import('./components/ModalWindow.vue') },
+  components: {ModalWindow:()=>import("@/components/ModalWindow") },
 };
 </script>
 
@@ -49,8 +49,6 @@ export default {
     text-align: center;
     color: #2c3e50;
 }
-
-
   nav {
     padding: 30px;
 
