@@ -12,13 +12,14 @@
 
 <script>
 export default {
-  name: "ModalFormWindow",
+  name: "ModalWindow",
   props: {
     settings: Object
   },
   components: {
     AddDataForm: ()=>import('./AddDataForm.vue'),
-    AuthForm: ()=>import('./AuthForm.vue')
+    AuthForm: ()=>import('./AuthForm.vue'),
+    ContextMenu: () => import('./ContextMenu'),
   },
   methods: {
     onCloseClick() {

@@ -1,6 +1,6 @@
 <template>
   <div class="cost">
-    <button @click="openAuthModalForm">Authorization  (Modal)</button>
+    <button @click="openAuthForm">Authorization  (Modal)</button>
     <h1>Cost Keeper</h1>
     <display-data :items="getPaymentsCurrentPageItems" />
     <MyPagination
@@ -8,7 +8,7 @@
       :count="getPaymentsLastPage"
       @changePage="changePage"
     />
-    <button @click="openAddPaymentModalForm">Add New Cost + (Modal)</button>
+    <button @click="openAddPaymentForm">Add New Cost + (Modal)</button>
     <hr />
     <my-button :handler="addCustomPayment" :payload="customPayments[0]"
       >Food 500</my-button
@@ -111,11 +111,11 @@ export default {
       return this.fetchPaymentsDataFromDB(page);
     },
 
-    openAddPaymentModalForm(){
+    openAddPaymentForm(){
       this.$modal.show('addDataForm', {title: "Add New Payment", component: 'AddDataForm'})
     },
 
-    openAuthModalForm(){
+    openAuthForm(){
       this.$modal.show('AuthForm', {title: "Authorization", component: 'AuthForm'})
     }
   },

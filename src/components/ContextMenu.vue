@@ -1,11 +1,8 @@
 <template>
-  <div class="wrapper">
-    <div class="modal-menu">
+    <div class="menu">
       <my-button :handler="editPayment">Редактировать</my-button>
       <my-button :handler="deletePayment">Удалить</my-button>
     </div>
-    <button @click="onCloseClick">Close</button>
-  </div>
 </template>
 
 <script>
@@ -34,7 +31,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .modal-menu {
-    background: #efefef;
+  .menu {
   }
 </style>

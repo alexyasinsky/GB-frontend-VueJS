@@ -6,7 +6,7 @@
       <router-link to="/notfound">Not Found</router-link>
     </nav>
     <router-view/>
-    <ModalFormWindow :settings="settings"  v-if="modalShow"/>
+    <ModalWindow :settings="settings"  v-if="modalShow"/>
   </div>
 </template>
 
@@ -37,7 +37,7 @@ export default {
     this.$modal.EventBus.$off('show', this.onShow)
     this.$modal.EventBus.$off('hide', this.onHide)
   },
-  components: { ModalFormWindow:()=>import('./components/ModalFormWindow.vue') },
+  components: { ModalWindow:()=>import('./components/ModalWindow.vue') },
 };
 </script>
 
