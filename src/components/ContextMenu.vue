@@ -11,21 +11,32 @@ import MyButton from "@/components/MyButton";
 export default {
   name: "ModalMenu",
   components: {MyButton},
+
   props: {
-    settings: Object
+    item: {
+      type: Object,
+      default: ()=>{}
+    }
   },
   methods: {
     editPayment() {
-      console.log('edit');
+      this.$modal.show('DataForm', {
+        component: 'DataForm',
+        positionComp: 'CenterWrapper',
+        item: this.item
+      })
     },
 
     deletePayment() {
       console.log('delete');
     },
 
-    onCloseClick() {
-      this.$modal.hide();
-    }
+
+
+  },
+
+  mounted() {
+    console.log(this.item);
   }
 }
 </script>

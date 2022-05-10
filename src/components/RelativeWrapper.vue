@@ -10,8 +10,12 @@
 export default {
   name: "RelativeWrapper",
   props: {
-    position: Object,
-    default: ()=>{}
+
+    position: {
+      type: Object,
+      default: () => {}
+    },
+
   },
 
   // data() {

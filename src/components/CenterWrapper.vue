@@ -10,8 +10,12 @@
 export default {
   name: "CenterWrapper",
   props: {
-    position: Object,
-    default: ()=>{}
+
+    position: {
+      type: Object,
+      default: () => {}
+    },
+
   },
 
 

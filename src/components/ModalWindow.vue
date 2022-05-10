@@ -2,7 +2,7 @@
   <div>
     <component :is="settings.positionComp" :position="settings.position">
       <div class="content">
-        <component :is="settings.component" />
+        <component :is="settings.component" :item="settings.item"/>
       </div>
       <div class="footer">
       </div>
@@ -20,7 +20,7 @@ export default {
   components: {
     CenterWrapper: () => import('./CenterWrapper'),
     RelativeWrapper: () => import('./RelativeWrapper'),
-    AddDataForm: ()=>import('./AddDataForm.vue'),
+    DataForm: ()=>import('./DataForm.vue'),
     AuthForm: ()=>import('./AuthForm.vue'),
     ContextMenu: () => import('./ContextMenu'),
   },
