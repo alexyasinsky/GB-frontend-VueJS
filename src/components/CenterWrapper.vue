@@ -1,7 +1,7 @@
 <template>
-  <div class="wrapper">
-    <slot/>
-  </div>
+    <div class="wrapper">
+      <slot/>
+    </div>
 </template>
 
 <script>
@@ -23,6 +23,7 @@ export default {
 </script>
 
 <style scoped>
+
   .wrapper {
     padding: 20px;
     position: absolute;
@@ -31,4 +32,7 @@ export default {
     background: #efefef;
     z-index: 2;
   }
+
+
+
 </style>

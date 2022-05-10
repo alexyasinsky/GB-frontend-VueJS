@@ -59,9 +59,9 @@ export default {
     ...mapActions('payments', [
       'fetchPaymentsDataFromDB',
       'fetchPaymentsLastPage',
-      'addPaymentToDB',
-      'editPaymentInDB',
-      'deletePaymentFromDB'
+      'addPayment',
+      'editPayment',
+      'deletePayment'
     ]),
 
     changePage(page) {
@@ -92,7 +92,7 @@ export default {
         category: request.params.category,
         value: request.query.value,
       };
-      await this.addPaymentToDB(item);
+      await this.addPayment(item);
       const paymentsLastPage = this.getPaymentsLastPage;
       if (paymentsLastPage !== page) {
         return next(`/home/${paymentsLastPage}`);
@@ -108,13 +108,13 @@ export default {
         category: request.params.category,
         value: request.query.value,
       };
-      await this.editPaymentInDB({item, page});
+      await this.editPayment({item, page});
       return next(`/home/${page}`);
     },
 
     async actionDeleteHandler(request, next, page) {
       const id = request.query.id;
-      await this.deletePaymentFromDB({id, page});
+      await this.deletePayment({id, page});
       return next(`/home/${page}`);
     },
 

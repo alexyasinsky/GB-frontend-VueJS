@@ -6,7 +6,9 @@
       <router-link to="/notfound">Not Found</router-link>
     </nav>
     <router-view/>
-    <ModalWindow :settings="settings"  v-if="modalShow"/>
+    <transition name="fade">
+      <ModalWindow :settings="settings"  v-if="modalShow"/>
+    </transition>
   </div>
 </template>
 
@@ -60,5 +62,12 @@ export default {
         color: #42b983;
       }
     }
+  }
+
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity 0.25s;
+  }
+  .fade-enter, .fade-leave-to {
+    opacity: 0;
   }
 </style>

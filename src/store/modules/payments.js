@@ -35,7 +35,6 @@ function reorganizeDB(oldDb) {
   return newDb;
 }
 
-
 export default {
 
   namespaced: true,
@@ -101,7 +100,7 @@ export default {
       });
     },
 
-    addPaymentToDB({state, dispatch}, item) {
+    addPayment({state, dispatch}, item) {
       return new Promise((resolve) => {
         let lastPageIndex = state.PaymentsLastPage;
         const page = 'page' + lastPageIndex;
@@ -120,7 +119,7 @@ export default {
       });
     },
 
-    editPaymentInDB({dispatch}, payload) {
+    editPayment({dispatch}, payload) {
       return new Promise((resolve) => {
         db['page' + payload.page].forEach(payment => {
           if (payment.id === payload.item.id) {
@@ -135,7 +134,7 @@ export default {
       })
     },
 
-    deletePaymentFromDB({dispatch, commit}, payload) {
+    deletePayment({dispatch, commit}, payload) {
       return new Promise((resolve) => {
         let pageArray =  db['page' + payload.page];
         pageArray.forEach(payment => {

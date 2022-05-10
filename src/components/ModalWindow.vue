@@ -41,4 +41,6 @@ export default {
     width: 100%;
     opacity: 0;
   }
+
+
 </style>

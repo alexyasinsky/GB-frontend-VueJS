@@ -18,6 +18,7 @@ export default {
       default: ()=>{}
     }
   },
+
   methods: {
     editPayment() {
       this.$modal.show('DataForm', {
@@ -39,11 +40,8 @@ export default {
         }
       }).catch(() => {});
     },
-  },
-
-  mounted() {
-    console.log(this.item);
   }
+
 }
 </script>
 
