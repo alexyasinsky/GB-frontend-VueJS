@@ -63,7 +63,7 @@ export default {
           } else {
             resolve({});
           }
-        },0)
+        },100)
       }).then(res=> {
         commit('setPaymentsDataChunk', res);
         commit('setPaymentsCurrentPage', pageNumber);
@@ -77,7 +77,6 @@ export default {
         commit('setPaymentsLastPage', res);
       });
     },
-
 
     addPaymentToDB({state, dispatch}, item) {
       return new Promise((resolve) => {
@@ -97,6 +96,21 @@ export default {
         dispatch('fetchPaymentsLastPage');
       });
     },
+
+    editPaymentInDB({dispatch}, payload) {
+      return new Promise((resolve) => {
+        db['page' + payload.page].forEach(payment => {
+          if (payment.id === payload.item.id) {
+            payment.date = payload.item.date;
+            payment.category = payload.item.category;
+            payment.value = payload.item.value;
+          }
+        });
+        resolve('edited');
+      }).then(()=> {
+        dispatch('fetchPaymentsDataFromDB', payload.page);
+      })
+    }
 
   },
 

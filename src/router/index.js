@@ -10,7 +10,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "PageHome" */ '../views/HomeView.vue'),
     children: [
       {
-        path: "add/payment/:category",
+        path: ":action/:context/:category",
       },
       {
         path: ":page",

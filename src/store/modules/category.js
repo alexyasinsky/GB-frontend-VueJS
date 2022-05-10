@@ -25,8 +25,8 @@ export default {
     fetchCategoryList({commit}) {
       return new Promise((resolve)=> {
         setTimeout(()=>{
-          resolve (['Food', 'Transport', 'Education', 'Entertainment'])
-        },1000)
+          resolve (['Food', 'Transport', 'Education', 'Entertainment', 'Navigation', 'Sport'])
+        },100)
       }).then(res => { commit('setCategories', res)})
     }
   },

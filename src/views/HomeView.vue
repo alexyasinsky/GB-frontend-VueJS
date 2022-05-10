@@ -60,6 +60,7 @@ export default {
       'fetchPaymentsDataFromDB',
       'fetchPaymentsLastPage',
       'addPaymentToDB',
+      'editPaymentInDB'
     ]),
 
     changePage(page) {
@@ -74,20 +75,30 @@ export default {
         .catch(() => {});
     },
 
-    async addActionHandler(request, next) {
+    async actionAddHandler(request, next, page) {
       const item = {
         date: request.query.date || this.getCurrentDate,
         category: request.params.category,
         value: request.query.value,
       };
       await this.addPaymentToDB(item);
-      // eslint-disable-next-line no-case-declarations
       const paymentsLastPage = this.getPaymentsLastPage;
-      if (paymentsLastPage !== this.currentPage) {
+      if (paymentsLastPage !== page) {
         return next(`/home/${paymentsLastPage}`);
       } else {
         await this.fetchPaymentsDataFromDB(paymentsLastPage);
       }
+    },
+
+    async actionEditHandler(request, next, page) {
+      const item = {
+        id: request.query.id,
+        date: request.query.date || this.getCurrentDate,
+        category: request.params.category,
+        value: request.query.value,
+      };
+      await this.editPaymentInDB({item, page});
+      return next(`/home/${page}`);
     },
 
     async loadPaymentPage(request, next) {
@@ -112,7 +123,7 @@ export default {
     },
 
     openAddPaymentForm(){
-      this.$modal.show('addDataForm', {component: 'AddDataForm', positionComp: 'CenterWrapper'})
+      this.$modal.show('DataForm', {component: 'DataForm', positionComp: 'CenterWrapper'})
     },
 
     openAuthForm(){
@@ -138,10 +149,14 @@ export default {
   },
 
   async beforeRouteUpdate(to, before, next) {
-    let linkArray = to.path.split('/');
-    switch (linkArray[2]) {
+    let action = to.params.action;
+    let page = this.currentPage;
+    switch (action) {
       case 'add':
-        await this.addActionHandler(to, next);
+        await this.actionAddHandler(to, next, page);
+        break;
+      case 'edit':
+        await this.actionEditHandler(to, next, page)
         break;
       default:
         await this.loadPaymentPage(to, next);
