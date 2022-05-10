@@ -27,12 +27,18 @@ export default {
       })
     },
 
-    deletePayment() {
-      console.log('delete');
+    async deletePayment() {
+      await this.$router.push({
+        name: 'home',
+        params: {
+          action: 'delete',
+          context: 'payment',
+        },
+        query: {
+          id: this.item.id
+        }
+      }).catch(() => {});
     },
-
-
-
   },
 
   mounted() {

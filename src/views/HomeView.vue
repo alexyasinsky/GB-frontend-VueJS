@@ -60,7 +60,8 @@ export default {
       'fetchPaymentsDataFromDB',
       'fetchPaymentsLastPage',
       'addPaymentToDB',
-      'editPaymentInDB'
+      'editPaymentInDB',
+      'deletePaymentFromDB'
     ]),
 
     changePage(page) {
@@ -108,6 +109,12 @@ export default {
         value: request.query.value,
       };
       await this.editPaymentInDB({item, page});
+      return next(`/home/${page}`);
+    },
+
+    async actionDeleteHandler(request, next, page) {
+      const id = request.query.id;
+      await this.deletePaymentFromDB({id, page});
       return next(`/home/${page}`);
     },
 
@@ -167,6 +174,9 @@ export default {
         break;
       case 'edit':
         await this.actionEditHandler(to, next, page)
+        break;
+      case 'delete':
+        await this.actionDeleteHandler(to, next, page);
         break;
       default:
         await this.loadPaymentPage(to, next);
