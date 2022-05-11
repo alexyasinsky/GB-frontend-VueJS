@@ -1,5 +1,5 @@
 <template>
-  <button @click.prevent="handler">
+  <button @click.prevent="onClick">
     <slot/>
   </button>
 </template>
@@ -10,6 +10,15 @@ export default {
   props: {
     handler: {
       type: Function
+    },
+    payload: {
+      type: Object,
+      default: ()=> {}
+    }
+  },
+  methods: {
+    onClick() {
+      this.handler(this.payload);
     }
   }
 }
