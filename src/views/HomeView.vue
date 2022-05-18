@@ -1,5 +1,6 @@
 <template>
   <div class="cost">
+    <button @click="openAuthForm">Authorization  (Modal)</button>
     <h1>Cost Keeper</h1>
     <display-data :items="getPaymentsCurrentPageItems" />
     <MyPagination
@@ -7,7 +8,7 @@
       :count="getPaymentsLastPage"
       @changePage="changePage"
     />
-    <my-button :handler="toggleShowForm"> Add New Cost + </my-button>
+    <button @click="openAddPaymentForm">Add New Cost + (Modal)</button>
     <hr />
     <my-button :handler="addCustomPayment" :payload="customPayments[0]"
       >Food 500</my-button
@@ -18,25 +19,19 @@
     <my-button :handler="addCustomPayment" :payload="customPayments[2]"
       >Entertainment 2000</my-button
     >
-    <add-data-form v-show="isFormShown" :current="currentPage" />
   </div>
 </template>
 
 <script>
 import DisplayData from '@/components/DisplayData';
-import AddDataForm from '@/components/AddDataForm';
-import myButton from '@/components/MyButton';
 import MyPagination from '@/components/MyPagination.vue';
-
 import { mapActions, mapGetters } from 'vuex';
-import MyButton from '@/components/MyButton.vue';
+import MyButton from "@/components/MyButton";
 
 export default {
   name: 'HomeView',
   components: {
     DisplayData,
-    AddDataForm,
-    myButton,
     MyPagination,
     MyButton,
   },
@@ -64,12 +59,10 @@ export default {
     ...mapActions('payments', [
       'fetchPaymentsDataFromDB',
       'fetchPaymentsLastPage',
-      'addPaymentToDB',
+      'addPayment',
+      'editPayment',
+      'deletePayment'
     ]),
-
-    toggleShowForm() {
-      this.isFormShown = !this.isFormShown;
-    },
 
     changePage(page) {
       if (page !== this.currentPage) {
@@ -79,24 +72,50 @@ export default {
 
     addCustomPayment(payload) {
       this.$router
-        .push(`/home/add/payment/${payload.category}/?value=${payload.value}`)
+        .push({
+          name: 'home',
+          params: {
+            action: 'add',
+            context: 'payment',
+            category: payload.category
+          },
+          query: {
+            value: payload.value
+          }
+        })
         .catch(() => {});
     },
 
-    async addActionHandler(request, next) {
+    async actionAddHandler(request, next, page) {
       const item = {
         date: request.query.date || this.getCurrentDate,
         category: request.params.category,
         value: request.query.value,
       };
-      await this.addPaymentToDB(item);
-      // eslint-disable-next-line no-case-declarations
+      await this.addPayment(item);
       const paymentsLastPage = this.getPaymentsLastPage;
-      if (paymentsLastPage !== this.currentPage) {
+      if (paymentsLastPage !== page) {
         return next(`/home/${paymentsLastPage}`);
       } else {
-        this.fetchPaymentsDataFromDB(paymentsLastPage);
+        await this.fetchPaymentsDataFromDB(paymentsLastPage);
       }
+    },
+
+    async actionEditHandler(request, next, page) {
+      const item = {
+        id: request.query.id,
+        date: request.query.date || this.getCurrentDate,
+        category: request.params.category,
+        value: request.query.value,
+      };
+      await this.editPayment({item, page});
+      return next(`/home/${page}`);
+    },
+
+    async actionDeleteHandler(request, next, page) {
+      const id = request.query.id;
+      await this.deletePayment({id, page});
+      return next(`/home/${page}`);
     },
 
     async loadPaymentPage(request, next) {
@@ -119,6 +138,14 @@ export default {
       this.currentPage = page;
       return this.fetchPaymentsDataFromDB(page);
     },
+
+    openAddPaymentForm(){
+      this.$modal.show('DataForm', {component: 'DataForm', positionComp: 'CenterWrapper'})
+    },
+
+    openAuthForm(){
+      this.$modal.show('AuthForm', {component: 'AuthForm', positionComp: 'CenterWrapper'})
+    }
   },
 
   computed: {
@@ -135,14 +162,21 @@ export default {
   },
 
   async created() {
-    this.checkExistingOfPaymentPage();
+    await this.checkExistingOfPaymentPage();
   },
 
   async beforeRouteUpdate(to, before, next) {
-    let linkArray = to.path.split('/');
-    switch (linkArray[2]) {
+    let action = to.params.action;
+    let page = this.currentPage;
+    switch (action) {
       case 'add':
-        await this.addActionHandler(to, next);
+        await this.actionAddHandler(to, next, page);
+        break;
+      case 'edit':
+        await this.actionEditHandler(to, next, page)
+        break;
+      case 'delete':
+        await this.actionDeleteHandler(to, next, page);
         break;
       default:
         await this.loadPaymentPage(to, next);

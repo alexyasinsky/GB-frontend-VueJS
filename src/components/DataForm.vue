@@ -24,23 +24,26 @@
 
   export default {
 
-    name: "AddDataForm",
+    name: "DataForm",
 
     components: {MyButton},
 
+    props: {
+      item: Object
+    },
+
     data() {
       return {
+        action: 'add',
+        id: 0,
         date: "",
         category: "",
         value: "",
         newCategory: "",
         isNewCategoryFormShown: false,
-        
       }
     },
-    props: {
-      current: Number
-    },
+    
     computed: {
 
       ...mapGetters('category', ['getCategoryList']),
@@ -55,13 +58,27 @@
         return this.getCategoryList
       },
     },
+
     methods: {
 
       ...mapMutations('category', ['addCategory']),
       ...mapActions('category', ['fetchCategoryList']),
 
       async onClickSave (){
-        await this.$router.push(`/home/add/payment/${this.category || "empty"}/?value=${this.value || null}&date=${this.date||this.getCurrentDate}`).catch(() => {});
+        // await this.$router.push(`/home/${this.action}/payment/${this.category || "empty"}/?value=${this.value || null}&date=${this.date||this.getCurrentDate}`).catch(() => {});
+        await this.$router.push({
+          name: 'home',
+          params: {
+            action: this.action,
+            context: 'payment',
+            category: this.category || "empty",
+          },
+          query: {
+            value: this.value || null,
+            date: this.date||this.getCurrentDate,
+            id: this.id
+          }
+        }).catch(() => {});
       },
 
 
@@ -81,11 +98,20 @@
 
     },
 
-      async created() {
-        await this.fetchCategoryList();
-      },
+    async created() {
+      await this.fetchCategoryList();
+    },
 
+    mounted() {
+      if (this.item) {
+        this.id = this.item.id;
+        this.date = this.item.date;
+        this.category = this.item.category;
+        this.value = this.item.value;
+        this.action = 'edit';
+      }
 
+    }
 
 
   }

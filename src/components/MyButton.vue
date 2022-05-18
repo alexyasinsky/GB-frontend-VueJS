@@ -9,7 +9,8 @@ export default {
   name: "MyButton",
   props: {
     handler: {
-      type: Function
+      type: Function,
+      default: () => {}
     },
     payload: {
       type: Object,

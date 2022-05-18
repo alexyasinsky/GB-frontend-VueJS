@@ -1,7 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue';
-import NotFoundView from '../views/NotFoundView.vue';
 
 Vue.use(VueRouter)
 
@@ -9,10 +7,10 @@ const routes = [
   {
     path: '/home',
     name: 'home',
-    component: HomeView,
+    component: () => import(/* webpackChunkName: "PageHome" */ '../views/HomeView.vue'),
     children: [
       {
-        path: "add/payment/:category",
+        path: ":action/:context/:category",
       },
       {
         path: ":page",
@@ -22,12 +20,12 @@ const routes = [
   {
     path: '/about',
     name: 'about',
-    component: () => import('../views/AboutView.vue')
+    component: () => import(/* webpackChunkName: "PageAbout" */ '../views/AboutView.vue')
   },
   {
     path: '/notfound',
     name: 'notfound',
-    component: NotFoundView
+    component: () => import(/* webpackChunkName: "PageNotFound" */ '../views/NotFoundView.vue')
   },
   {
     path: '/',
