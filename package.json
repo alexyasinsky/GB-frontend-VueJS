@@ -5,11 +5,30 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "test:unit": "vue-cli-service test:unit",
+    "test": "jest",
     "lint": "vue-cli-service lint"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "vue"
+    ],
+    "transform": {
+      ".*\\.(vue)$": "<rootDir>/node_modules/vue-jest",
+      "^.+\\.js$": "<rootDir>/node_modules/babel-jest"
+    },
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "**/*.{js,vue}",
+      "!**/node_modules/**",
+      "!**/coverage/**"
+    ],
+    "testEnvironment": "jsdom"
   },
   "dependencies": {
     "core-js": "^3.8.3",
+    "regenerator-runtime": "^0.13.9",
     "vue": "^2.6.14",
     "vue-router": "^3.5.1",
     "vuex": "^3.6.2"
@@ -23,12 +42,20 @@
     "@vue/cli-plugin-unit-mocha": "~5.0.0",
     "@vue/cli-plugin-vuex": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
-    "@vue/test-utils": "^1.1.3",
+    "@vue/test-utils": "^1.3.0",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^28.1.0",
     "chai": "^4.2.0",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
+    "jest": "^28.1.0",
+    "jest-environment-jsdom": "^28.1.0",
+    "jsdom": "19.0.0",
+    "jsdom-global": "3.0.2",
+    "node-sass": "^7.0.1",
     "sass": "^1.32.7",
     "sass-loader": "^12.0.0",
+    "vue-jest": "^3.0.7",
     "vue-template-compiler": "^2.6.14"
   },
   "eslintConfig": {
