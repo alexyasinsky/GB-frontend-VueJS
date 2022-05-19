@@ -181,6 +181,6 @@ export default {
       default:
         await this.loadPaymentPage(to, next);
     }
-  },
+  } ,
 };
 </script>

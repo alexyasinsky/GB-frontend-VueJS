@@ -2,14 +2,14 @@
   <div>
     <form>
       <input v-model="date"  placeholder="date"/>
-      <select v-model="category" v-if="categoryList">
+      <select name='categories' v-model="category" v-if="categoryList">
         <option disabled value="">category</option>
         <option v-for="(value, idx) in categoryList" :key="idx">{{value}}</option>
       </select>
       <input v-model="value" placeholder="value"/>
       <myButton :handler="onClickSave">Save</myButton>
     </form>
-    <myButton :handler="showCategoryAddForm">Добавить новую категорию +</myButton>
+    <myButton :handler="toggleCategoryAddForm">Добавить новую категорию +</myButton>
        <form v-show="isNewCategoryFormShown">
          <input v-model="newCategory"  placeholder="category"/>
          <myButton :handler="onClickAddCategory">Добавить</myButton>
@@ -93,7 +93,7 @@
         }
       },
 
-      showCategoryAddForm() {
+      toggleCategoryAddForm() {
         this.isNewCategoryFormShown = !this.isNewCategoryFormShown
       },
 
