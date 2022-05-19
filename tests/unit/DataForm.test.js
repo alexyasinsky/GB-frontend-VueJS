@@ -1,4 +1,4 @@
-
+/* eslint-disable */
 
 import {mount, shallowMount, createLocalVue } from '@vue/test-utils';
 import DataForm from '../../src/components/DataForm.vue';
@@ -6,8 +6,6 @@ import Vuex from 'vuex'
 import { expect } from "@jest/globals";
 import category from '@/store/modules/category';
 import modal from '@/plugins/ModalWindow';
-
-
 
 
 describe('DataForm Component',()=>{
@@ -69,6 +67,7 @@ describe('DataForm Component',()=>{
     btn.trigger('click');
     expect(addCategory).toHaveBeenCalled();
     expect(wrapper.vm.$data.newCategory).toBe('');
+    // expect(input.element.value).toBe('');
   });
 
   test('Test 4', () => {
@@ -76,11 +75,20 @@ describe('DataForm Component',()=>{
       store, localVue,
     });
     const btn=wrapper.find('button[name=toggleForm]');
-    const form=wrapper.find('form[name=addForm]').isVisible();
     expect(wrapper.vm.$data.isNewCategoryFormShown).toBe(false);
-    expect(form).toBe(false);
     btn.trigger('click');
     expect(wrapper.vm.$data.isNewCategoryFormShown).toBe(true);
-    expect(form).toBe(true);
+  });
+
+  test('Test 5', async () => {
+    const wrapper = mount(DataForm, {
+      store, localVue,
+    });
+    const form=wrapper.find('form[name=addForm]');
+    expect(wrapper.vm.$data.isNewCategoryFormShown).toBe(false);
+    expect(form.isVisible()).toBe(false);
+    await wrapper.setData({ isNewCategoryFormShown: true })
+    expect(wrapper.vm.$data.isNewCategoryFormShown).toBe(true);
+    expect(form.isVisible()).toBe(true);
   });
 })
