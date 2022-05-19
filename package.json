@@ -24,7 +24,10 @@
       "!**/node_modules/**",
       "!**/coverage/**"
     ],
-    "testEnvironment": "jsdom"
+    "testEnvironment": "jsdom",
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1"
+    }
   },
   "dependencies": {
     "core-js": "^3.8.3",
