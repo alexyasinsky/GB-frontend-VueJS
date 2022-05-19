@@ -5,15 +5,16 @@ import DataForm from '../../src/components/DataForm.vue';
 import Vuex from 'vuex'
 import { expect } from "@jest/globals";
 import category from '@/store/modules/category';
-import VueRouter from 'vue-router';
+import modal from '@/plugins/ModalWindow';
 
 
-const localVue = createLocalVue();
 
-localVue.use(Vuex);
 
 describe('DataForm Component',()=>{
+  const localVue = createLocalVue();
 
+  localVue.use(Vuex, modal);
+  
   let store;
 
   beforeEach(() => {
@@ -21,12 +22,14 @@ describe('DataForm Component',()=>{
       modules: {
         category: {
           namespaced: true,
-          state: category.state,
+          state: { 
+            categoryList : ['Food', 'Transport'] 
+          },
           getters: {
             getCategoryList: () => ['Food', 'Transport']   
           },
-          mutations: category.mutations,
-          actions: category.actions
+          actions: category.actions,
+          mutations: category.mutations
         }
       }
     });
@@ -55,4 +58,29 @@ describe('DataForm Component',()=>{
     expect(categorySelect.html()).toContain(`<option>Transport</option>`);
   });
 
+  test('Test adding new category', ()=> {
+    const addCategory = jest.spyOn(DataForm.methods, 'addCategory');
+    const wrapper = mount(DataForm, {
+      store, localVue,
+    });
+    const input = wrapper.find('input[name=newCategory');
+    input.setValue('Movies');
+    const btn = wrapper.find('button[name=addCategory]');
+    btn.trigger('click');
+    expect(addCategory).toHaveBeenCalled();
+    expect(wrapper.vm.$data.newCategory).toBe('');
+  });
+
+  test('Test 4', () => {
+    const wrapper = mount(DataForm, {
+      store, localVue,
+    });
+    const btn=wrapper.find('button[name=toggleForm]');
+    const form=wrapper.find('form[name=addForm]').isVisible();
+    expect(wrapper.vm.$data.isNewCategoryFormShown).toBe(false);
+    expect(form).toBe(false);
+    btn.trigger('click');
+    expect(wrapper.vm.$data.isNewCategoryFormShown).toBe(true);
+    expect(form).toBe(true);
+  });
 })

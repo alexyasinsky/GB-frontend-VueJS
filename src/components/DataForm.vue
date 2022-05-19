@@ -9,11 +9,11 @@
       <input v-model="value" placeholder="value"/>
       <myButton :handler="onClickSave">Save</myButton>
     </form>
-    <myButton :handler="toggleCategoryAddForm">Добавить новую категорию +</myButton>
-       <form v-show="isNewCategoryFormShown">
-         <input v-model="newCategory"  placeholder="category"/>
-         <myButton :handler="onClickAddCategory">Добавить</myButton>
-       </form>      
+    <myButton name='toggleForm' :handler="toggleCategoryAddForm">Добавить новую категорию +</myButton>
+    <form name='addForm' v-show="isNewCategoryFormShown">
+      <input name='newCategory' v-model="newCategory" placeholder="category"/>
+      <myButton name='addCategory' :handler="onClickAddCategory">Добавить</myButton>
+    </form>      
   </div>
 </template>
 
@@ -112,6 +112,7 @@
         this.value = this.item.value;
         this.action = 'edit';
       }
+
 
     }
 
