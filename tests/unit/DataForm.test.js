@@ -70,17 +70,20 @@ describe('DataForm Component',()=>{
     // expect(input.element.value).toBe('');
   });
 
-  test('Test 4', () => {
+  test('Test toggling Category Form part 1 (influence of button to data)', () => {
     const wrapper = mount(DataForm, {
       store, localVue,
     });
     const btn=wrapper.find('button[name=toggleForm]');
+    // const form=wrapper.find('form[name=addForm]');
     expect(wrapper.vm.$data.isNewCategoryFormShown).toBe(false);
+    // expect(form.isVisible()).toBe(false);
     btn.trigger('click');
     expect(wrapper.vm.$data.isNewCategoryFormShown).toBe(true);
+    // expect(form.isVisible()).toBe(true);
   });
 
-  test('Test 5', async () => {
+  test('Test toggling Category Form part 2 (influence of data to html)', async () => {
     const wrapper = mount(DataForm, {
       store, localVue,
     });
