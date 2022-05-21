@@ -29,7 +29,7 @@ import { mapActions, mapGetters } from 'vuex';
 import MyButton from "@/components/MyButton";
 
 export default {
-  name: 'HomeView',
+  name: 'DashboardView',
   components: {
     DisplayData,
     MyPagination,
@@ -66,14 +66,14 @@ export default {
 
     changePage(page) {
       if (page !== this.currentPage) {
-        this.$router.push(`/home/${page}`);
+        this.$router.push(`/dashboard/${page}`);
       }
     },
 
     addCustomPayment(payload) {
       this.$router
         .push({
-          name: 'home',
+          name: 'dashboard',
           params: {
             action: 'add',
             context: 'payment',
@@ -95,7 +95,7 @@ export default {
       await this.addPayment(item);
       const paymentsLastPage = this.getPaymentsLastPage;
       if (paymentsLastPage !== page) {
-        return next(`/home/${paymentsLastPage}`);
+        return next(`/dashboard/${paymentsLastPage}`);
       } else {
         await this.fetchPaymentsDataFromDB(paymentsLastPage);
       }
@@ -109,19 +109,19 @@ export default {
         value: request.query.value,
       };
       await this.editPayment({item, page});
-      return next(`/home/${page}`);
+      return next(`/dashboard/${page}`);
     },
 
     async actionDeleteHandler(request, next, page) {
       const id = request.query.id;
       await this.deletePayment({id, page});
-      return next(`/home/${page}`);
+      return next(`/dashboard/${page}`);
     },
 
     async loadPaymentPage(request, next) {
       let page = +request.params.page;
       if (isNaN(page) || page > this.getPaymentsLastPage) {
-        return next('/home/1');
+        return next('/dashboard/1');
       } else {
         this.currentPage = page;
         await this.fetchPaymentsDataFromDB(page);
@@ -133,7 +133,7 @@ export default {
       await this.fetchPaymentsLastPage();
       let page = +this.$route.params.page;
       if (isNaN(page) || page > this.getPaymentsLastPage) {
-        return this.$router.push('/home/1');
+        return this.$router.push('/dashboard/1');
       }
       this.currentPage = page;
       return this.fetchPaymentsDataFromDB(page);

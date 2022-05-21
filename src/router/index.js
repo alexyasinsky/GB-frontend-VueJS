@@ -5,9 +5,9 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/home',
-    name: 'home',
-    component: () => import(/* webpackChunkName: "PageHome" */ '../views/HomeView.vue'),
+    path: '/dashboard',
+    name: 'dashboard',
+    component: () => import(/* webpackChunkName: "Pagedashboard" */ '../views/DashBoardView.vue'),
     children: [
       {
         path: ":action/:context/:category",
@@ -29,7 +29,8 @@ const routes = [
   },
   {
     path: '/',
-    redirect: {path: '/home/1'}
+    name: 'home',
+    component: () => import(/* webpackChunkName: "PageHome" */ '../views/HomeView.vue')
   },
   {
     path: '*',

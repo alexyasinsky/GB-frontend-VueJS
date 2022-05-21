@@ -69,7 +69,7 @@
 
       async onClickSave (){
         await this.$router.push({
-          name: 'home',
+          name: 'dashboard',
           params: {
             action: this.action,
             context: 'payment',

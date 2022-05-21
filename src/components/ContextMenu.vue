@@ -30,7 +30,7 @@ export default {
 
     async deletePayment() {
       await this.$router.push({
-        name: 'home',
+        name: 'dashboard',
         params: {
           action: 'delete',
           context: 'payment',
