@@ -1,186 +1,312 @@
 <template>
-  <div class="cost">
-    <button @click="openAuthForm">Authorization  (Modal)</button>
-    <h1>Cost Keeper</h1>
-    <display-data :items="getPaymentsCurrentPageItems" />
-    <MyPagination
-      :current="currentPage"
-      :count="getPaymentsLastPage"
-      @changePage="changePage"
-    />
-    <button @click="openAddPaymentForm">Add New Cost + (Modal)</button>
-    <hr />
-    <my-button :handler="addCustomPayment" :payload="customPayments[0]"
-      >Food 500</my-button
-    >
-    <my-button :handler="addCustomPayment" :payload="customPayments[1]"
-      >Transport 50</my-button
-    >
-    <my-button :handler="addCustomPayment" :payload="customPayments[2]"
-      >Entertainment 2000</my-button
-    >
-  </div>
+  <v-container>
+    <v-row>
+      <v-col>
+        <div
+            :class="['text-h3', 'my-3', 'font-weight-regular']"
+        >
+          Cost Keeper
+        </div>
+        <v-dialog
+            v-model="dialog"
+            max-width="500px"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+                color="teal"
+                dark
+                class="my-3"
+                v-bind="attrs"
+                v-on="on"
+            >
+              Add New Cost
+              <v-icon>
+                mdi-plus
+              </v-icon>
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-title>
+              <span class="text-h5">{{ formTitle }}</span>
+            </v-card-title>
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col
+                      cols="12"
+                      sm="6"
+                      md="4"
+                  >
+                    <v-text-field
+                        :append-icon="'mdi-calendar'"
+                        v-model="editedItem.date"
+                        label="Date"
+                        @click:append="showCalendar = !showCalendar"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col
+                      cols="12"
+                      sm="6"
+                      md="4"
+                  >
+                    <v-select
+                        :items="categoryList"
+                        label="Category"
+                        v-model="editedItem.category"
+                    ></v-select>
+                  </v-col>
+                  <v-col
+                      cols="12"
+                      sm="6"
+                      md="4"
+                  >
+                    <v-text-field
+                        v-model="editedItem.value"
+                        label="Value"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                  color="blue darken-1"
+                  text
+                  @click="close"
+              >
+                Cancel
+              </v-btn>
+              <v-btn
+                  color="blue darken-1"
+                  text
+                  @click="save"
+              >
+                Save
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <v-dialog v-model="dialogDelete" max-width="500px">
+          <v-card>
+            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
+              <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <v-dialog
+            v-model="showCalendar"
+            width="290px"
+        >
+          <v-card>
+            <v-date-picker v-model="datePicker"></v-date-picker>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="handleCalendarButton">OK</v-btn>
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <v-data-table
+            :headers="headers"
+            :items="payments"
+            sort-by="id"
+            sort-desc
+            class="elevation-1"
+        >
+          <template v-slot:[`item.actions`]="{ item }">
+            <v-icon
+                small
+                class="mr-2"
+                @click="editItem(item)"
+            >
+              mdi-pencil
+            </v-icon>
+            <v-icon
+                small
+                @click="deleteItem(item)"
+            >
+              mdi-delete
+            </v-icon>
+          </template>
+          <template v-slot:no-data>
+            <v-btn
+                color="primary"
+                @click="initialize"
+            >
+              Reset
+            </v-btn>
+          </template>
+        </v-data-table>
+      </v-col>
+      <v-col>
+        DIAGRAM
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-import DisplayData from '@/components/DisplayData';
-import MyPagination from '@/components/MyPagination.vue';
-import { mapActions, mapGetters } from 'vuex';
-import MyButton from "@/components/MyButton";
+import {mapActions, mapGetters} from "vuex";
 
 export default {
-  name: 'DashboardView',
-  components: {
-    DisplayData,
-    MyPagination,
-    MyButton,
-  },
-  data() {
-    return {
-      currentPage: 1,
-      isFormShown: false,
-      customPayments: [
-        {
-          category: 'Food',
-          value: 500,
-        },
-        {
-          category: 'Transport',
-          value: 50,
-        },
-        {
-          category: 'Entertainment',
-          value: 2000,
-        },
-      ],
-    };
-  },
-  methods: {
-    ...mapActions('payments', [
-      'fetchPaymentsDataFromDB',
-      'fetchPaymentsLastPage',
-      'addPayment',
-      'editPayment',
-      'deletePayment'
-    ]),
+  data: () => ({
+    dialog: false,
+    dialogDelete: false,
+    showCalendar: false,
+    datePicker:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+    headers: [
+      {
+        text: '#id',
+        sortable: false,
+        value: 'id',
+      },
+      {
+        text: 'Date',
+        sortable: false,
+        value: 'date'
+      },
+      {
+        text: 'Category',
+        sortable: false,
+        value: 'category'
+      },
+      {
+        text: 'Value',
+        sortable: false,
+        value: 'value'
+      },
+      {
+        text: 'Actions',
+        sortable: false,
+        value: 'actions'
+      },
 
-    changePage(page) {
-      if (page !== this.currentPage) {
-        this.$router.push(`/dashboard/${page}`);
-      }
+    ],
+    payments: [],
+    editedIndex: -1,
+    editedItem: {
+      id: '',
+      date: '',
+      category: '',
+      value: 0
     },
-
-    addCustomPayment(payload) {
-      this.$router
-        .push({
-          name: 'dashboard',
-          params: {
-            action: 'add',
-            context: 'payment',
-            category: payload.category
-          },
-          query: {
-            value: payload.value
-          }
-        })
-        .catch(() => {});
+    defaultItem: {
+      id: 0,
+      date: '',
+      category: '',
+      value: 0
     },
-
-    async actionAddHandler(request, next, page) {
-      const item = {
-        date: request.query.date || this.getCurrentDate,
-        category: request.params.category,
-        value: request.query.value,
-      };
-      await this.addPayment(item);
-      const paymentsLastPage = this.getPaymentsLastPage;
-      if (paymentsLastPage !== page) {
-        return next(`/dashboard/${paymentsLastPage}`);
-      } else {
-        await this.fetchPaymentsDataFromDB(paymentsLastPage);
-      }
-    },
-
-    async actionEditHandler(request, next, page) {
-      const item = {
-        id: request.query.id,
-        date: request.query.date || this.getCurrentDate,
-        category: request.params.category,
-        value: request.query.value,
-      };
-      await this.editPayment({item, page});
-      return next(`/dashboard/${page}`);
-    },
-
-    async actionDeleteHandler(request, next, page) {
-      const id = request.query.id;
-      await this.deletePayment({id, page});
-      return next(`/dashboard/${page}`);
-    },
-
-    async loadPaymentPage(request, next) {
-      let page = +request.params.page;
-      if (isNaN(page) || page > this.getPaymentsLastPage) {
-        return next('/dashboard/1');
-      } else {
-        this.currentPage = page;
-        await this.fetchPaymentsDataFromDB(page);
-        return next();
-      }
-    },
-
-    async checkExistingOfPaymentPage() {
-      await this.fetchPaymentsLastPage();
-      let page = +this.$route.params.page;
-      if (isNaN(page) || page > this.getPaymentsLastPage) {
-        return this.$router.push('/dashboard/1');
-      }
-      this.currentPage = page;
-      return this.fetchPaymentsDataFromDB(page);
-    },
-
-    openAddPaymentForm(){
-      this.$modal.show('DataForm', {component: 'DataForm', positionComp: 'CenterWrapper'})
-    },
-
-    openAuthForm(){
-      this.$modal.show('AuthForm', {component: 'AuthForm', positionComp: 'CenterWrapper'})
-    }
-  },
+  }),
 
   computed: {
-    ...mapGetters('payments', [
-      'getPaymentsLastPage',
-      'getPaymentsCurrentPageItems',
+    ...mapGetters('category', ['getCategoryList']),
+    ...mapGetters('paymentsNew', [
+        'getPaymentsData',
+        'getLastPaymentId'
     ]),
 
-    getCurrentDate() {
-      const today = new Date();
-      let formatter = new Intl.DateTimeFormat('ru');
-      return formatter.format(today);
+    formTitle () {
+      return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+    },
+    categoryList(){
+      return this.getCategoryList;
+    },
+
+    getId() {
+      return this.editedIndex > -1 ? this.editedItem.id : this.getLastPaymentId + 1;
+    }
+  },
+
+  watch: {
+    dialog (val) {
+      val || this.close()
+    },
+    dialogDelete (val) {
+      val || this.closeDelete()
     },
   },
 
-  async created() {
-    await this.checkExistingOfPaymentPage();
+  async created () {
+    await this.fetchPaymentsDataFromDB();
+    this.initialize();
+    await this.fetchCategoryList();
   },
 
-  async beforeRouteUpdate(to, before, next) {
-    let action = to.params.action;
-    let page = this.currentPage;
-    switch (action) {
-      case 'add':
-        await this.actionAddHandler(to, next, page);
-        break;
-      case 'edit':
-        await this.actionEditHandler(to, next, page)
-        break;
-      case 'delete':
-        await this.actionDeleteHandler(to, next, page);
-        break;
-      default:
-        await this.loadPaymentPage(to, next);
+  methods: {
+
+    ...mapActions('category', ['fetchCategoryList']),
+    ...mapActions('paymentsNew', [
+        'fetchPaymentsDataFromDB',
+        'addPayment',
+        'editPayment',
+        'deletePayment'
+    ]),
+
+    async initialize () {
+      this.payments = this.getPaymentsData;
+
+    },
+
+    editItem (item) {
+      this.editedIndex = this.payments.indexOf(item)
+      this.editedItem = Object.assign({}, item)
+      this.dialog = true
+    },
+
+    deleteItem (item) {
+      this.editedIndex = this.payments.indexOf(item);
+      this.editedItem = Object.assign({}, item)
+      this.dialogDelete = true
+    },
+
+    deleteItemConfirm () {
+      this.deletePayment(this.editedIndex);
+      // this.payments.splice(this.editedIndex, 1)
+      this.closeDelete()
+    },
+
+    close () {
+      this.dialog = false
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
+      })
+    },
+
+    closeDelete () {
+      this.dialogDelete = false
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
+      })
+    },
+
+    save () {
+      if (this.editedIndex > -1) {
+        const payment = this.editedItem;
+        const index = this.editedIndex;
+        this.editPayment({payment, index});
+
+      } else {
+        this.editedItem.id = this.getId;
+        this.addPayment(this.editedItem);
+        // this.payments.push(this.editedItem);
+      }
+      this.close()
+    },
+
+    handleCalendarButton() {
+      this.editedItem.date = this.datePicker;
+      this.showCalendar = false;
     }
-  } ,
-};
+  },
+
+}
+
 </script>
