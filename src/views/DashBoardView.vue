@@ -1,9 +1,11 @@
 <template>
   <v-container>
     <v-row>
-      <v-col>
+      <v-col
+        cols="5"
+      >
         <div
-            :class="['text-h3', 'my-3', 'font-weight-regular']"
+            :class="['text-h4', 'my-3', 'font-weight-regular', 'text-center']"
         >
           Cost Keeper
         </div>
@@ -48,8 +50,16 @@
           :init="initialize"
         />
       </v-col>
-      <v-col>
-        DIAGRAM
+      <v-spacer></v-spacer>
+      <v-col
+          cols="5"
+      >
+        <div
+            :class="['text-h4', 'my-3', 'font-weight-regular', 'text-center']"
+        >
+          Cost by categories
+        </div>
+        <PaymentsDiagram/>
       </v-col>
     </v-row>
   </v-container>
@@ -60,10 +70,12 @@ import {mapActions, mapGetters} from "vuex";
 import PaymentDelete from "@/components/PaymentDelete";
 import PaymentForm from "@/components/PaymentForm";
 import DisplayData from "@/components/DisplayData";
+import PaymentsDiagram from "@/components/PaymentsDiagram";
 
 export default {
 
   components: {
+    PaymentsDiagram,
     PaymentDelete,
     PaymentForm,
     DisplayData
