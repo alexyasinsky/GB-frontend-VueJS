@@ -4,33 +4,16 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 const routes = [
+
   {
-    path: '/dashboard',
+    path: '/',
     name: 'dashboard',
-    component: () => import(/* webpackChunkName: "Pagedashboard" */ '../views/DashBoardView.vue'),
-    children: [
-      {
-        path: ":action/:context/:category",
-      },
-      {
-        path: ":page",
-      },
-    ],
-  },
-  {
-    path: '/about',
-    name: 'about',
-    component: () => import(/* webpackChunkName: "PageAbout" */ '../views/AboutView.vue')
+    component: () => import(/* webpackChunkName: "PageDashboard" */ '../views/DashBoardView.vue'),
   },
   {
     path: '/notfound',
     name: 'notfound',
     component: () => import(/* webpackChunkName: "PageNotFound" */ '../views/NotFoundView.vue')
-  },
-  {
-    path: '/',
-    name: 'home',
-    component: () => import(/* webpackChunkName: "PageHome" */ '../views/HomeView.vue')
   },
   {
     path: '*',
