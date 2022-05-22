@@ -206,7 +206,7 @@ export default {
 
   computed: {
     ...mapGetters('category', ['getCategoryList']),
-    ...mapGetters('paymentsNew', [
+    ...mapGetters('payments', [
         'getPaymentsData',
         'getLastPaymentId'
     ]),
@@ -241,7 +241,7 @@ export default {
   methods: {
 
     ...mapActions('category', ['fetchCategoryList']),
-    ...mapActions('paymentsNew', [
+    ...mapActions('payments', [
         'fetchPaymentsDataFromDB',
         'addPayment',
         'editPayment',
