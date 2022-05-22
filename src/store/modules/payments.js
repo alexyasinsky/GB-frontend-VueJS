@@ -15,7 +15,7 @@ export default {
 
   state: {
     paymentsData: [],
-    headers: []
+    paymentsSums: []
   },
 
   mutations: {
@@ -46,7 +46,14 @@ export default {
 
     getLastPaymentId: state => {
       return state.paymentsData[state.paymentsData.length - 1]?.id;
-    }
+    },
+
+    // getPaymentsSums: state => {
+    //   let sums = [];
+    //   state.paymentsData.forEach(payment => {
+    //     sums.push(payment.)
+    //   });
+    // }
 
   },
 

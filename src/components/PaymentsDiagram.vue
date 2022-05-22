@@ -1,21 +1,17 @@
 <script>
 import { Doughnut } from 'vue-chartjs';
+import {mapActions, mapGetters} from "vuex";
 export default {
   name: "PaymentsDiagram",
   extends: Doughnut,
   data () {
     return {
       chartData: {
-        labels: ["Babol",	"Cabanatuan",	"Daegu",	"Jerusalem"],
+        labels: [],
         datasets: [{
           backgroundColor: [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(153, 102, 255, 1)',
           ],
-          data: [1000,	500,	1500,	1000]
+          data: [1000,	500,	1500,	1000, 1500, 500]
         }]
       },
       options: {
@@ -30,7 +26,33 @@ export default {
       }
     }
   },
-  mounted () {
+
+  computed: {
+    ...mapGetters('category', ['getCategoryList']),
+    // ...mapGetters('payments', ['getPaymentsSums'])
+  },
+
+  methods: {
+    ...mapActions('category', ['fetchCategoryList'])
+  },
+
+
+
+  async mounted () {
+    await this.fetchCategoryList();
+    this.chartData.labels = this.getCategoryList;
+    let count = this.chartData.labels.length;
+    let colors = [];
+    for (let i = 1; i <= count; i++) {
+      const red = Math.floor(Math.random() * 255);
+      const green = Math.floor(Math.random() * 255);
+      const blue = Math.floor(Math.random() * 255);
+      colors.push(`rgba(${red},${green}, ${blue})`);
+    }
+    this.chartData.datasets[0].backgroundColor = [
+      ...this.chartData.datasets[0].backgroundColor,
+      ...colors
+    ]
     this.renderChart(this.chartData, this.options)
   }
 }
