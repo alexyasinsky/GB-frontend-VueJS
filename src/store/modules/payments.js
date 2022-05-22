@@ -15,6 +15,7 @@ export default {
 
   state: {
     paymentsData: [],
+    headers: []
   },
 
   mutations: {

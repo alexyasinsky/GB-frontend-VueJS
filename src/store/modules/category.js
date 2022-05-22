@@ -17,7 +17,7 @@ export default {
       state.categoryList = payload
     },
     addCategory(state, payload) {
-      state.categoryList.push(payload);
+      state.categoryList.unshift(payload);
     }
   },
 
