@@ -15,7 +15,7 @@ export default {
 
   state: {
     paymentsData: [],
-    paymentsSums: []
+    paymentsSums: {}
   },
 
   mutations: {
@@ -34,6 +34,10 @@ export default {
 
     deletePaymentFromState(state, payload) {
       state.paymentsData.splice(payload, 1);
+    },
+
+    setPaymentsSums(state, payload) {
+      state.paymentsSums = payload;
     }
 
   },
@@ -48,12 +52,9 @@ export default {
       return state.paymentsData[state.paymentsData.length - 1]?.id;
     },
 
-    // getPaymentsSums: state => {
-    //   let sums = [];
-    //   state.paymentsData.forEach(payment => {
-    //     sums.push(payment.)
-    //   });
-    // }
+    getPaymentsSums: state => {
+      return state.paymentsSums;
+    }
 
   },
 
@@ -77,7 +78,7 @@ export default {
         }, 500)
       })
         .then(response => {
-        commit('addPaymentToState', response)
+        commit('addPaymentToState', response);
       });
     },
 
@@ -103,6 +104,20 @@ export default {
         .then(response => {
           commit('deletePaymentFromState', response);
         });
+    },
+
+    calculateSums({commit, state}, categories) {
+      let sums = {};
+      categories.forEach(category => {
+        let sum = 0;
+        for (let item of state.paymentsData) {
+          if (item.category === category) {
+            sum += item.value;
+          }
+        }
+        sums = Object.assign(sums, {[category]:sum});
+      });
+      commit('setPaymentsSums', sums);
     }
 
   }

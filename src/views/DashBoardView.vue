@@ -59,7 +59,10 @@
         >
           Cost by categories
         </div>
-        <PaymentsDiagram/>
+
+        <PaymentChart
+          :chart="chartData"
+        />
       </v-col>
     </v-row>
   </v-container>
@@ -70,12 +73,12 @@ import {mapActions, mapGetters} from "vuex";
 import PaymentDelete from "@/components/PaymentDelete";
 import PaymentForm from "@/components/PaymentForm";
 import DisplayData from "@/components/DisplayData";
-import PaymentsDiagram from "@/components/PaymentsDiagram";
+import PaymentChart from "@/components/PaymentsChart";
 
 export default {
 
   components: {
-    PaymentsDiagram,
+    PaymentChart,
     PaymentDelete,
     PaymentForm,
     DisplayData
@@ -84,6 +87,9 @@ export default {
     showPaymentForm: false,
     showPaymentDelete: false,
     payments: [],
+    chartData: {
+
+    },
     editedIndex: -1,
     editedItem: {
       id: '',
@@ -103,7 +109,12 @@ export default {
 
     ...mapGetters('payments', [
         'getPaymentsData',
-        'getLastPaymentId'
+        'getLastPaymentId',
+        'getPaymentsSums'
+    ]),
+
+    ...mapGetters('categories', [
+       'getCategoryList'
     ]),
 
     formTitle () {
@@ -113,6 +124,10 @@ export default {
 
     getId() {
       return this.editedIndex > -1 ? this.editedItem.id : this.getLastPaymentId + 1;
+    },
+
+    paymentSums() {
+      return this.getPaymentsSums;
     }
   },
 
@@ -125,10 +140,19 @@ export default {
     },
   },
 
+
   async created () {
     await this.fetchPaymentsDataFromDB();
+    await this.fetchCategoryList();
     await this.initialize();
-
+    await this.calculateSums(this.getCategoryList);
+    this.chartData = {
+      labels: (Object.keys(this.getPaymentsSums)),
+      datasets: [{
+        backgroundColor: ['red', 'green', 'blue','red', 'green', 'blue'],
+        data: ([...Object.values(this.getPaymentsSums)])
+      }]
+    }
   },
 
   methods: {
@@ -138,7 +162,12 @@ export default {
         'fetchPaymentsDataFromDB',
         'addPayment',
         'editPayment',
-        'deletePayment'
+        'deletePayment',
+        'calculateSums',
+    ]),
+
+    ...mapActions('categories', [
+        'fetchCategoryList'
     ]),
 
     async initialize () {
@@ -157,9 +186,17 @@ export default {
       this.showPaymentDelete = true
     },
 
-    deleteItemConfirm () {
-      this.deletePayment(this.editedIndex);
-      // this.payments.splice(this.editedIndex, 1)
+    async deleteItemConfirm () {
+      await this.deletePayment(this.editedIndex);
+      await this.calculateSums(this.getCategoryList);
+      this.chartData = {
+        labels: (Object.keys(this.getPaymentsSums)),
+        datasets: [{
+          backgroundColor: ['red', 'green', 'blue','red', 'green', 'blue'],
+          data: ([...Object.values(this.getPaymentsSums)])
+        }]
+      }
+              // this.payments.splice(this.editedIndex, 1)
       this.closeDelete()
     },
 
@@ -194,6 +231,7 @@ export default {
     },
 
   },
+
 
 }
 

@@ -118,7 +118,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters('category', ['getCategoryList']),
+    ...mapGetters('categories', ['getCategoryList']),
 
     categoryList(){
       return this.getCategoryList;
@@ -126,8 +126,8 @@ export default {
   },
 
   methods: {
-    ...mapActions('category', ['fetchCategoryList']),
-    ...mapMutations('category', ['addCategory']),
+    ...mapActions('categories', ['fetchCategoryList']),
+    ...mapMutations('categories', ['addCategory']),
 
     toggleCalendar() {
       this.showCalendar = !this.showCalendar;

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import category from './modules/category';
+import categories from './modules/categories';
 import payments from './modules/payments';
 
 Vue.use(Vuex)
@@ -9,6 +9,6 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   modules: {
     payments,
-    category
+    categories
   }
 })
