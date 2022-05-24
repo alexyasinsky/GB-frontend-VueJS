@@ -5,29 +5,61 @@ export default {
   namespaced: true,
   
   state: {
-    categoryList: []
+    names: [],
+    colors: []
   },
 
   getters: {
-    getCategoryList: state=>state.categoryList
+    getCategoryNames: state=>state.names,
+    getCategoryColors: state=>state.colors
   },
 
   mutations: {
-    setCategories(state, payload){
-      state.categoryList = payload
+    setNames(state, payload){
+      state.names = payload
     },
-    addCategory(state, payload) {
-      state.categoryList.unshift(payload);
-    }
+    addName(state, payload) {
+      state.names.unshift(payload);
+    },
+    setColors(state, payload) {
+      state.colors = payload;
+    },
+    addColor(state, payload) {
+      state.colors.unshift(payload);
+}
   },
 
   actions: {
-    fetchCategoryList({commit}) {
+    fetchCategories({commit, dispatch}) {
       return new Promise((resolve)=> {
         setTimeout(()=>{
           resolve (['Food', 'Transport', 'Education', 'Entertainment', 'Navigation', 'Sport'])
         },100)
-      }).then(res => { commit('setCategories', res)})
+      }).then(response => {
+        commit('setNames', response);
+        dispatch('generateCategoryColors');
+      })
+    },
+
+    generateCategoryColors({state, commit}) {
+      let count = state.names.length;
+      let colors = [];
+      for (let i = 1; i <= count; i++) {
+        const red = Math.floor(Math.random() * 255);
+        const green = Math.floor(Math.random() * 255);
+        const blue = Math.floor(Math.random() * 255);
+        colors.push(`rgba(${red},${green}, ${blue})`);
+      }
+      commit('setColors', colors);
+    },
+
+    addCategory({commit}, category) {
+      commit('addName', category);
+      const red = Math.floor(Math.random() * 255);
+      const green = Math.floor(Math.random() * 255);
+      const blue = Math.floor(Math.random() * 255);
+      const color = `rgba(${red},${green}, ${blue})`;
+      commit('addColor', color);
     }
   },
 }

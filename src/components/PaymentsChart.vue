@@ -9,6 +9,10 @@ export default {
   },
   data () {
     return {
+      chartData: {
+        labels: [],
+        datasets: []
+      },
       options: {
         legend: {
           display: true,
@@ -23,36 +27,30 @@ export default {
   },
 
   computed: {
-    ...mapGetters('payments', ['getPaymentsSums', 'getPaymentsData'])
+    ...mapGetters('categories', ['getCategoryColors']),
   },
 
-  methods: {
-    generateColors(count) {
-      let colors = [];
-      for (let i = 1; i <= count; i++) {
-        const red = Math.floor(Math.random() * 255);
-        const green = Math.floor(Math.random() * 255);
-        const blue = Math.floor(Math.random() * 255);
-        colors.push(`rgba(${red},${green}, ${blue})`);
-      }
-      return colors;
-    },
-    setChartData(propsData) {
-      const labels = Object.keys(propsData);
-      this.chartData.labels = [...labels];
-      const colors = this.generateColors(Object.keys(propsData).length);
-      this.chartData.datasets[0].backgroundColor = [...colors];
-      const values = Object.values(propsData)
-      this.chartData.datasets[0].data = [...values];
-    }
-  },
 
   watch: {
     chart: function (newData) {
-      console.log(newData, 'watcher');
-      this.renderChart(newData, this.options);
+      const labels = Object.keys(newData);
+      const data = Object.values(newData);
+      const colors = this.getCategoryColors;
+      this.chartData = {
+        labels: labels,
+        datasets: [{
+          backgroundColor: colors,
+          data: data
+        }]
+      }
+      this.renderChart(this.chartData, this.options);
     }
+
   },
+
+  created() {
+
+  }
 
 
 }

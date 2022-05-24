@@ -29,9 +29,9 @@
           </template>
           <paymentForm
               :title="formTitle"
-              :item="editedItem"
-              :cancel="close"
-              :save="save"
+              :closeForm="closeForm"
+              :index="editedIndex"
+              :edited="editedItem"
           />
         </v-dialog>
         <v-dialog
@@ -61,7 +61,7 @@
         </div>
 
         <PaymentChart
-          :chart="chartData"
+          :chart="getPaymentsSums"
         />
       </v-col>
     </v-row>
@@ -87,9 +87,6 @@ export default {
     showPaymentForm: false,
     showPaymentDelete: false,
     payments: [],
-    chartData: {
-
-    },
     editedIndex: -1,
     editedItem: {
       id: '',
@@ -97,11 +94,9 @@ export default {
       category: '',
       value: 0
     },
-    defaultItem: {
-      id: 0,
-      date: '',
-      category: '',
-      value: 0
+    chartData: {
+      labels: [],
+      datasets: []
     },
   }),
 
@@ -109,12 +104,12 @@ export default {
 
     ...mapGetters('payments', [
         'getPaymentsData',
-        'getLastPaymentId',
         'getPaymentsSums'
     ]),
 
     ...mapGetters('categories', [
-       'getCategoryList'
+      'getCategoryNames',
+      'getCategoryColors'
     ]),
 
     formTitle () {
@@ -122,9 +117,7 @@ export default {
     },
 
 
-    getId() {
-      return this.editedIndex > -1 ? this.editedItem.id : this.getLastPaymentId + 1;
-    },
+
 
     paymentSums() {
       return this.getPaymentsSums;
@@ -133,31 +126,21 @@ export default {
 
   watch: {
     showPaymentForm (val) {
-      val || this.close()
+      val || this.closeForm()
     },
     showPaymentDelete (val) {
       val || this.closeDelete()
     },
   },
 
-
   async created () {
+    await this.fetchCategories();
     await this.fetchPaymentsDataFromDB();
-    await this.fetchCategoryList();
     await this.initialize();
-    await this.calculateSums(this.getCategoryList);
-    this.chartData = {
-      labels: (Object.keys(this.getPaymentsSums)),
-      datasets: [{
-        backgroundColor: ['red', 'green', 'blue','red', 'green', 'blue'],
-        data: ([...Object.values(this.getPaymentsSums)])
-      }]
-    }
+    await this.calculateSums(this.getCategoryNames);
   },
 
   methods: {
-
-
     ...mapActions('payments', [
         'fetchPaymentsDataFromDB',
         'addPayment',
@@ -167,10 +150,10 @@ export default {
     ]),
 
     ...mapActions('categories', [
-        'fetchCategoryList'
+        'fetchCategories'
     ]),
 
-    async initialize () {
+    initialize () {
       this.payments = this.getPaymentsData;
     },
 
@@ -188,22 +171,13 @@ export default {
 
     async deleteItemConfirm () {
       await this.deletePayment(this.editedIndex);
-      await this.calculateSums(this.getCategoryList);
-      this.chartData = {
-        labels: (Object.keys(this.getPaymentsSums)),
-        datasets: [{
-          backgroundColor: ['red', 'green', 'blue','red', 'green', 'blue'],
-          data: ([...Object.values(this.getPaymentsSums)])
-        }]
-      }
-              // this.payments.splice(this.editedIndex, 1)
-      this.closeDelete()
+      await this.calculateSums(this.getCategoryNames);
+      this.closeDelete();
     },
 
-    close () {
+    closeForm () {
       this.showPaymentForm = false
       this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
       })
     },
@@ -216,19 +190,18 @@ export default {
       })
     },
 
-    save () {
-      if (this.editedIndex > -1) {
-        const payment = this.editedItem;
-        const index = this.editedIndex;
-        this.editPayment({payment, index});
-
-      } else {
-        this.editedItem.id = this.getId;
-        this.addPayment(this.editedItem);
-        // this.payments.push(this.editedItem);
-      }
-      this.close()
-    },
+    setChartData() {
+      const labels = Object.keys(this.getPaymentsSums);
+      const data = Object.values(this.getPaymentsSums);
+      const colors = this.getCategoryColors;
+      this.chartData = {
+          labels: labels,
+          datasets: [{
+            backgroundColor: colors,
+            data: data
+          }]
+        }
+    }
 
   },
 

@@ -11,7 +11,6 @@
     <v-dialog
         width="300px"
         v-model="showCategoryForm"
-
     >
       <CategoryForm
           :add="addCategoryButtonHandler"
@@ -68,14 +67,14 @@
           <v-btn
               color="blue darken-1"
               text
-              @click="cancel"
+              @click="cancelButtonHandler"
           >
             Cancel
           </v-btn>
           <v-btn
               color="blue darken-1"
               text
-              @click="save"
+              @click="saveButtonHandler"
           >
             Save
           </v-btn>
@@ -87,7 +86,7 @@
 
 <script>
 
-import {mapActions, mapGetters, mapMutations} from "vuex";
+import {mapActions, mapGetters} from "vuex";
 import ModalCalendar from "@/components/ModalCalendar";
 import CategoryForm from "@/components/CategoryForm";
 
@@ -96,9 +95,9 @@ export default {
 
   props: {
     title: String,
-    item: Object,
-    cancel: Function,
-    save: Function,
+    closeForm: Function,
+    index: Number,
+    edited: Object,
   },
 
   components: {
@@ -114,20 +113,34 @@ export default {
       date: '',
       category: '',
       value: 0
-    }
+    },
+    defaultItem: {
+      id: 0,
+      date: '',
+      category: '',
+      value: 0
+    },
   }),
 
   computed: {
-    ...mapGetters('categories', ['getCategoryList']),
+    ...mapGetters('categories', ['getCategoryNames']),
+    ...mapGetters('payments', ['getLastPaymentId']),
 
     categoryList(){
-      return this.getCategoryList;
+      return this.getCategoryNames;
     },
   },
 
   methods: {
-    ...mapActions('categories', ['fetchCategoryList']),
-    ...mapMutations('categories', ['addCategory']),
+    ...mapActions('categories', [
+        'addCategory'
+    ]),
+
+    ...mapActions('payments', [
+      'addPayment',
+      'editPayment',
+      'calculateSums',
+    ]),
 
     toggleCalendar() {
       this.showCalendar = !this.showCalendar;
@@ -146,18 +159,57 @@ export default {
     toggleCategoryForm() {
       this.showCategoryForm = !this.showCategoryForm;
     },
+
+    cancelButtonHandler() {
+      this.closeForm();
+      this.editedItem = Object.assign({}, this.defaultItem);
+    },
+
+    async saveButtonHandler() {
+      const payment = Object.assign({}, this.editedItem);
+      const index = this.index;
+      if (index > -1) {
+        payment.value = +payment.value;
+        await this.editPayment({ payment, index});
+        await this.calculateSums(this.getCategoryNames);
+      } else {
+        payment.id = this.getId();
+        payment.value = +payment.value;
+        await this.addPayment(payment);
+        await this.calculateSums(this.getCategoryNames);
+      }
+      this.closeForm();
+    },
+
+    getId() {
+      if (this.index > -1) {
+        return this.editedItem.id;
+      } else {
+        return this.getLastPaymentId + 1;
+      }
+    },
+
+    setEditedItem() {
+      if (this.index > -1) {
+        this.editedItem = Object.assign({}, this.edited);
+      } else {
+        this.editedItem = Object.assign({}, this.defaultItem);
+      }
+    }
   },
 
-  async created () {
-    await this.fetchCategoryList();
-
+  mounted() {
+    this.setEditedItem();
   },
 
-  beforeUpdate() {
-    this.editedItem = this.item;
+  watch: {
+    index: function () {
+      this.setEditedItem();
+    }
   },
 
 }
+
 </script>
 
 <style scoped>
