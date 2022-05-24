@@ -94,6 +94,12 @@ export default {
       category: '',
       value: 0
     },
+    defaultItem: {
+      id: 0,
+      date: '',
+      category: '',
+      value: 0
+    },
     chartData: {
       labels: [],
       datasets: []
