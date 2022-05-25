@@ -24,7 +24,7 @@
     <template v-slot:no-data>
       <v-btn
           color="primary"
-          @click="init"
+          @click="reset"
       >
         Reset
       </v-btn>
@@ -40,7 +40,7 @@ export default {
     items: Array,
     edit: Function,
     remove: Function,
-    init: Function
+    reset: Function
   },
 
   data: ()=> ({

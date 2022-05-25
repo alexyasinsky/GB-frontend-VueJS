@@ -1,11 +1,12 @@
 <script>
 import { Doughnut } from 'vue-chartjs';
-import {mapGetters} from "vuex";
+
 export default {
-  name: "PaymentChart",
+  name: "DoughnutChart",
   extends: Doughnut,
   props: {
-    chart: Object
+    chart: Object,
+    colors: Array
   },
   data () {
     return {
@@ -26,16 +27,11 @@ export default {
     }
   },
 
-  computed: {
-    ...mapGetters('categories', ['getCategoryColors']),
-  },
-
-
   watch: {
     chart: function (newData) {
       const labels = Object.keys(newData);
       const data = Object.values(newData);
-      const colors = this.getCategoryColors;
+      const colors = this.colors;
       this.chartData = {
         labels: labels,
         datasets: [{
@@ -47,10 +43,6 @@ export default {
     }
 
   },
-
-  created() {
-
-  }
 
 
 }

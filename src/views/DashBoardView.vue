@@ -38,16 +38,17 @@
             v-model="showPaymentDelete"
             max-width="500px"
         >
-          <PaymentDelete
-            :close="closeDelete"
-            :confirm="deleteItemConfirm"
+          <ModalConfirm
+            title='Are you sure you want to delete this item?'
+            :cancel="closeModalDelete"
+            :ok="modalDeleteConfirm"
           />
         </v-dialog>
         <DisplayData
           :items="payments"
-          :edit="editItem"
-          :remove="deleteItem"
-          :init="initialize"
+          :edit="initEditingItem"
+          :remove="initDeletingItem"
+          :reset="setPayments"
         />
       </v-col>
       <v-spacer></v-spacer>
@@ -60,8 +61,9 @@
           Cost by categories
         </div>
 
-        <PaymentChart
+        <DoughnutChart
           :chart="getPaymentsSums"
+          :colors='getCategoryColors'
         />
       </v-col>
     </v-row>
@@ -70,16 +72,16 @@
 
 <script>
 import {mapActions, mapGetters} from "vuex";
-import PaymentDelete from "@/components/PaymentDelete";
 import PaymentForm from "@/components/PaymentForm";
 import DisplayData from "@/components/DisplayData";
-import PaymentChart from "@/components/PaymentsChart";
+import DoughnutChart from "@/components/DoughnutChart";
+import ModalConfirm from "@/components/ModalConfirm";
 
 export default {
 
   components: {
-    PaymentChart,
-    PaymentDelete,
+    DoughnutChart,
+    ModalConfirm,
     PaymentForm,
     DisplayData
   },
@@ -88,18 +90,8 @@ export default {
     showPaymentDelete: false,
     payments: [],
     editedIndex: -1,
-    editedItem: {
-      id: '',
-      date: '',
-      category: '',
-      value: 0
-    },
-    defaultItem: {
-      id: 0,
-      date: '',
-      category: '',
-      value: 0
-    },
+    editedItem: {},
+    defaultItem: {},
     chartData: {
       labels: [],
       datasets: []
@@ -122,27 +114,15 @@ export default {
       return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
     },
 
-
-
-
     paymentSums() {
       return this.getPaymentsSums;
     }
   },
 
-  watch: {
-    showPaymentForm (val) {
-      val || this.closeForm()
-    },
-    showPaymentDelete (val) {
-      val || this.closeDelete()
-    },
-  },
-
   async created () {
     await this.fetchCategories();
     await this.fetchPaymentsDataFromDB();
-    await this.initialize();
+    await this.setPayments();
     await this.calculateSums(this.getCategoryNames);
   },
 
@@ -159,26 +139,20 @@ export default {
         'fetchCategories'
     ]),
 
-    initialize () {
+    setPayments () {
       this.payments = this.getPaymentsData;
     },
 
-    editItem (item) {
+    initEditingItem (item) {
       this.editedIndex = this.payments.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.showPaymentForm = true
     },
 
-    deleteItem (item) {
+    initDeletingItem (item) {
       this.editedIndex = this.payments.indexOf(item);
       this.editedItem = Object.assign({}, item)
       this.showPaymentDelete = true
-    },
-
-    async deleteItemConfirm () {
-      await this.deletePayment(this.editedIndex);
-      await this.calculateSums(this.getCategoryNames);
-      this.closeDelete();
     },
 
     closeForm () {
@@ -188,7 +162,13 @@ export default {
       })
     },
 
-    closeDelete () {
+    async modalDeleteConfirm () {
+      await this.deletePayment(this.editedIndex);
+      await this.calculateSums(this.getCategoryNames);
+      this.closeModalDelete();
+    },
+
+    closeModalDelete () {
       this.showPaymentDelete = false
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
@@ -196,21 +176,7 @@ export default {
       })
     },
 
-    setChartData() {
-      const labels = Object.keys(this.getPaymentsSums);
-      const data = Object.values(this.getPaymentsSums);
-      const colors = this.getCategoryColors;
-      this.chartData = {
-          labels: labels,
-          datasets: [{
-            backgroundColor: colors,
-            data: data
-          }]
-        }
-    }
-
   },
-
 
 }
 
