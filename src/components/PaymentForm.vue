@@ -198,14 +198,14 @@ export default {
     }
   },
 
-  mounted() {
-    this.setEditedItem();
-  },
-
   watch: {
-    index: function () {
-      this.setEditedItem();
-    }
+    index: {
+      handler: function () {
+        this.setEditedItem();
+      },
+      immediate: true
+    } 
+
   },
 
 }

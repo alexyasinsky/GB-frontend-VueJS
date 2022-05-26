@@ -85,6 +85,7 @@ export default {
     PaymentForm,
     DisplayData
   },
+
   data: () => ({
     showPaymentForm: false,
     showPaymentDelete: false,
@@ -97,6 +98,15 @@ export default {
       datasets: []
     },
   }),
+
+  watch: {
+      showPaymentForm (val) {
+        val || this.closeForm();
+      },
+      showPaymentDelete (val) {
+        val || this.closeModalDelete();
+      },
+    },
 
   computed: {
 
@@ -156,10 +166,8 @@ export default {
     },
 
     closeForm () {
-      this.showPaymentForm = false
-      this.$nextTick(() => {
-        this.editedIndex = -1
-      })
+      this.showPaymentForm = false;
+      this.editedIndex = -1;
     },
 
     async modalDeleteConfirm () {
