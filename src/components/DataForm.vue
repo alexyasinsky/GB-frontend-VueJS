@@ -1,19 +1,19 @@
 <template>
   <div>
     <form>
-        <input v-model="date"  placeholder="date"/>
-        <select v-model="category" v-if="categoryList">
-          <option disabled value="">category</option>
-          <option v-for="(value, idx) in categoryList" :key="idx">{{value}}</option>
-        </select>
-        <input v-model="value" placeholder="value"/>
-        <my-button :handler="onClickSave">Save</my-button>
-      </form>
-       <my-button :handler="showCategoryAddForm">Добавить новую категорию +</my-button>
-       <form v-show="isNewCategoryFormShown">
-         <input v-model="newCategory"  placeholder="category"/>
-         <my-button :handler="onClickAddCategory">Добавить</my-button>
-       </form>      
+      <input v-model="date"  placeholder="date"/>
+      <select name='categories' v-model="category" v-if="categoryList">
+        <option disabled value="">category</option>
+        <option v-for="(value, idx) in categoryList" :key="idx">{{value}}</option>
+      </select>
+      <input v-model="value" placeholder="value"/>
+      <myButton :handler="onClickSave">Save</myButton>
+    </form>
+    <myButton name='toggleForm' :handler="toggleCategoryAddForm">Добавить новую категорию +</myButton>
+    <form name='addForm' v-show="isNewCategoryFormShown">
+      <input name='newCategory' v-model="newCategory" placeholder="category"/>
+      <myButton name='addCategory' :handler="onClickAddCategory">Добавить</myButton>
+    </form>      
   </div>
 </template>
 
@@ -29,7 +29,10 @@
     components: {MyButton},
 
     props: {
-      item: Object
+      item: {
+        type: Object,
+        default: ()=>{}
+      }
     },
 
     data() {
@@ -65,7 +68,6 @@
       ...mapActions('category', ['fetchCategoryList']),
 
       async onClickSave (){
-        // await this.$router.push(`/home/${this.action}/payment/${this.category || "empty"}/?value=${this.value || null}&date=${this.date||this.getCurrentDate}`).catch(() => {});
         await this.$router.push({
           name: 'home',
           params: {
@@ -91,7 +93,7 @@
         }
       },
 
-      showCategoryAddForm() {
+      toggleCategoryAddForm() {
         this.isNewCategoryFormShown = !this.isNewCategoryFormShown
       },
 
@@ -110,6 +112,7 @@
         this.value = this.item.value;
         this.action = 'edit';
       }
+
 
     }
 

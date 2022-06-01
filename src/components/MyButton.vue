@@ -1,5 +1,5 @@
 <template>
-  <button @click.prevent="onClick">
+  <button :name='name' @click.prevent="onClick">
     <slot/>
   </button>
 </template>
@@ -15,7 +15,8 @@ export default {
     payload: {
       type: Object,
       default: ()=> {}
-    }
+    },
+    name: String
   },
   methods: {
     onClick() {
