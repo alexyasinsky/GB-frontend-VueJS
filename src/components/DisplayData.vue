@@ -1,41 +1,81 @@
 <template>
-  <div>
-    <div v-for="(item, index) in items" :key="index" class="payment__item">
-      {{ item }}
-    <button @click="openContextMenu(item, $event)">...</button>
-  </div>
-</div>
+  <v-data-table
+      :headers="headers"
+      :items="items"
+      sort-by="id"
+      sort-desc
+      class="elevation-1"
+  >
+    <template v-slot:[`item.actions`]="{ item }">
+      <v-icon
+          small
+          class="mr-2"
+          @click="edit(item)"
+      >
+        mdi-pencil
+      </v-icon>
+      <v-icon
+          small
+          @click="remove(item)"
+      >
+        mdi-delete
+      </v-icon>
+    </template>
+    <template v-slot:no-data>
+      <v-btn
+          color="primary"
+          @click="reset"
+      >
+        Reset
+      </v-btn>
+    </template>
+  </v-data-table>
 </template>
 
 <script>
-  export default {
+export default {
   name: "DisplayData",
 
   props: {
-    items: {
-      type: Array,
-      default: ()=>[]
-    }
+    items: Array,
+    edit: Function,
+    remove: Function,
+    reset: Function
   },
 
-  methods: {
-    openContextMenu(item, event) {
-      this.$modal.show('ContextMenu', {
-        component: 'ContextMenu',
-        positionComp: 'RelativeWrapper',
-        position: {x: event.clientX, y: event.clientY},
-        item: item
-      })
-    }
-  }
+  data: ()=> ({
+    headers: [
+      {
+        text: '#id',
+        sortable: false,
+        value: 'id',
+      },
+      {
+        text: 'Date',
+        sortable: false,
+        value: 'date'
+      },
+      {
+        text: 'Category',
+        sortable: false,
+        value: 'category'
+      },
+      {
+        text: 'Value',
+        sortable: false,
+        value: 'value'
+      },
+      {
+        text: 'Actions',
+        sortable: false,
+        value: 'actions'
+      },
 
-  }
-
+    ],
+  })
+}
 </script>
 
-<style scoped lang="scss">
-  .payment__item {
-    display: flex;
-  }
+<style scoped>
 
 </style>
