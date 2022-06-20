@@ -16,6 +16,10 @@ const routes = [
     component: () => import(/* webpackChunkName: "PageNotFound" */ '../views/NotFoundView.vue')
   },
   {
+    path: '/index',
+    redirect: {path: '/'}
+  },
+  {
     path: '*',
     redirect: {path: '/notfound'}
   }
@@ -26,10 +30,5 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
-
-// router.beforeEach((to, form, next) => {
-//   console.log(to);
-//   next();
-// })
 
 export default router
